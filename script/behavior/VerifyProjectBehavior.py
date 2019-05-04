@@ -45,7 +45,7 @@ class VerifyProjectBehavior(_GG("BaseBehavior")):
 
 	# 默认方法【obj为绑定该组件的对象，argList和argDict为可变参数，_retTuple为该组件的前个函数返回值】
 	# def defaultFun(self, obj, *argList, _retTuple = None, **argDict):
-	# 	print(obj._className_);
+	# 	_GG("log")(obj._className_);
 	# 	pass;
 
 	def showEntryPyPathDialog(self, obj, _retTuple = None):

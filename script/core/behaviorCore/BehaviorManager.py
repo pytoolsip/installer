@@ -37,7 +37,7 @@ class BehaviorManager(object):
 			behavior.setBehaviorPath(path); # 设置组件的路径
 			return behavior;
 		except Exception as e:
-			print("Require behavior fail! [{}] =>".format(path), e);
+			_GG("log")("Require behavior fail! [{}] =>".format(path), e);
 		return None;
 
 	# 根据组件配置require组件实例
@@ -84,9 +84,9 @@ class BehaviorManager(object):
 					# 保存所绑定组件实例到对象的_BEHAVIOR_DICT_
 					obj._BEHAVIOR_DICT_[behavior.getBehaviorFilePath()] = behavior;
 				else:
-					print("Bind behavior fail ! Because of binded behavior[name:{}, file path:{}] in obj .".format(behavior.getBehaviorName(), behavior.getBehaviorFilePath()));
+					_GG("log")("Bind behavior fail ! Because of binded behavior[name:{}, file path:{}] in obj .".format(behavior.getBehaviorName(), behavior.getBehaviorFilePath()));
 		except Exception as e:
-			print("Bind behavior fail! [{}] =>".format(behaviorConfig), e);
+			_GG("log")("Bind behavior fail! [{}] =>".format(behaviorConfig), e);
 		return behavior;
 
 	# 解绑组件
@@ -97,9 +97,9 @@ class BehaviorManager(object):
 				self.__behaviorBinder__.unbindBehaviorToObj(behavior, obj);
 				return True;
 			else:
-				print("UnBind behavior[name:{}, file path:{}] fail ! Because behavior is not base on BaseBehavior .".format(behavior.getBehaviorName(), behavior.getBehaviorFilePath()));
+				_GG("log")("UnBind behavior[name:{}, file path:{}] fail ! Because behavior is not base on BaseBehavior .".format(behavior.getBehaviorName(), behavior.getBehaviorFilePath()));
 		except Exception as e:
-			print("UnBind behavior fail! =>", e);
+			_GG("log")("UnBind behavior fail! =>", e);
 		return False;
 
 	# 绑定依赖组件

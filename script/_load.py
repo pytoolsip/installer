@@ -31,7 +31,8 @@ class Loader(object):
 	def lockGlobal_G(self):
 		_G.lockGlobal_GTo_Global(); # 锁定全局变量
 
-	def loadGlobalInfo(self):
+	def loadGlobalInfo(self, isConsole = True):
+		self.loadLogFunc(isConsole); # 加载全局日志打印方法
 		self.loadUniqueIdFunc(); # 加载唯一Id的全局函数
 		self.loadPaths(); # 加载全局路径名变量
 		self.loadObjects(); # 加载全局对象变量
@@ -39,6 +40,13 @@ class Loader(object):
 		self.loadResources(); # 加载全局资源变量
 		self.lockGlobal_G(); # 锁定全局变量
 		pass;
+
+	# 加载全局日志打印方法
+	def loadLogFunc(self, isConsole):
+		def log(*argList, **argDict):
+			if isConsole:
+				print(*argList, **argDict);
+		_G.setGlobalVarTo_Global("log", log);
 
 	# 加载唯一Id的全局函数
 	def loadUniqueIdFunc(self):
@@ -66,14 +74,14 @@ class Loader(object):
 
 	# 加载全局配置变量
 	def loadConfigs(self):
-		print("Loading configs......");
+		_G._GG("log")("Loading configs......");
 		_G.setGlobalVarTo_Global("AppConfig", AppConfig);
 		_G.setGlobalVarTo_Global("ClientConfig", ClientConfig()); # 设置客户端配置的全局变量
-		print("Loaded configs!");
+		_G._GG("log")("Loaded configs!");
 		pass;
 
 	# 加载全局资源变量
 	def loadResources(self):
-		print("Loading resources......");
-		print("Loaded resources!");
+		_G._GG("log")("Loading resources......");
+		_G._GG("log")("Loaded resources!");
 		pass;

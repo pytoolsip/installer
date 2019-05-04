@@ -27,7 +27,7 @@ class BaseBehavior(object):
 
 	# 打印obj绑定的组件名称【obj为绑定该组件的对象，argList和argDict为可变参数】
 	def printBehaviorName(self, obj, *argList, **argDict):
-		print(self.getBehaviorName());
+		_GG("log")(self.getBehaviorName());
 		pass;
 
 	# 获取组件文件路径

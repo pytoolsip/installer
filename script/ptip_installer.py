@@ -3,7 +3,7 @@ from _load import Loader;
 
 # 初始化窗口加载器
 Loader = Loader(os.getcwd());
-Loader.loadGlobalInfo();
+Loader.loadGlobalInfo(isConsole = False);
 # 导入WindowLoader
 from window.WindowLoader import WindowLoader;
 winLoader = WindowLoader();
