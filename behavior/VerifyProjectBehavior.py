@@ -68,72 +68,52 @@ class VerifyProjectBehavior(_GG("BaseBehavior")):
 
 	# 校验python环境
 	def verifyPythonEnv(self, obj, _retTuple = None):
-		if hasattr(obj, "verifyPythonEnvironment"):
-			if obj.verifyPythonEnvironment(pythonPath = _GG("ClientConfig").Config().Get("env", "python", None)):
-				if hasattr(obj, "verifyPythonVersion"):
-					if not obj.verifyPythonVersion(pythonPath = _GG("ClientConfig").Config().Get("env", "python", None)):
-						return False, obj.showEntryPyVerPathDialog;
-				return True;
-			else:
-				return False, obj.showEntryPyPathDialog;
-		raise Exception("There is not attr of verifyPythonEnvironment in obj !");
+		if obj.verifyPythonEnvironment(pythonPath = _GG("ClientConfig").Config().Get("env", "python", None)):
+			if not obj.verifyPythonVersion(pythonPath = _GG("ClientConfig").Config().Get("env", "python", None)):
+				return False, obj.showEntryPyVerPathDialog;
+			return True;
+		return False, obj.showEntryPyPathDialog;
 
 	def showInstallPipMsgDialog(self, obj, _retTuple = None):
 		messageDialog = wx.MessageDialog(obj, "是否要确认安装pip环境？", "校验pip环境失败！", style = wx.YES_NO|wx.ICON_QUESTION);
 		if messageDialog.ShowModal() == wx.ID_YES:
 			obj.showDetailTextCtrl(text = "正在安装pip环境...");
-			if hasattr(obj, "installPipByEasyInstall"):
-				if obj.installPipByEasyInstall():
-					obj.showDetailTextCtrl(text = "安装“pip”环境成功。");
-				else:
-					obj.showDetailTextCtrl(text = "安装“pip”环境失败！");
+			if obj.installPipByEasyInstall():
+				obj.showDetailTextCtrl(text = "安装“pip”环境成功。");
+			else:
+				obj.showDetailTextCtrl(text = "安装“pip”环境失败！");
 
 	# 校验pip安装环境
 	def verifyPipEnv(self, obj, _retTuple = None):
-		if hasattr(obj, "verifyPipEnvironment"):
-			if obj.verifyPipEnvironment(pythonPath = _GG("ClientConfig").Config().Get("env", "python", None)):
-				return True;
-			else:
-				return False, obj.showInstallPipMsgDialog;
-		raise Exception("There is not attr of verifyPipEnvironment in obj !");
+		if obj.verifyPipEnvironment(pythonPath = _GG("ClientConfig").Config().Get("env", "python", None)):
+			return True;
+		return False, obj.showInstallPipMsgDialog;
 
 	def showInstallModMsgDialog(self, obj, modNameList = [], _retTuple = None):
 		messageDialog = wx.MessageDialog(obj, "是否要确认安装以下模块？\n" + "\n".join(modNameList), "校验import模块失败！", style = wx.YES_NO|wx.ICON_QUESTION);
 		if messageDialog.ShowModal() == wx.ID_YES:
 			obj.showDetailTextCtrl(text = "开始安装校验失败的模块...");
-			if hasattr(obj, "installPackageByPip"):
-				failedNameList = [];
-				for modName in modNameList:
-					if obj.installPackageByPip(modName):
-						obj.showDetailTextCtrl(text = "安装“{}”模块成功。".format(modName));
-					else:
-						obj.showDetailTextCtrl(text = "安装“{}”模块失败！".format(modName));
-						failedNameList.append(modName);
-				return len(failedNameList) == 0;
-			else:
-				raise Exception("There is not attr of installPackageByPip in obj !");
+			failedNameList = [];
+			for modName in modNameList:
+				if obj.installPackageByPip(modName):
+					obj.showDetailTextCtrl(text = "安装“{}”模块成功。".format(modName));
+				else:
+					obj.showDetailTextCtrl(text = "安装“{}”模块失败！".format(modName));
+					failedNameList.append(modName);
+			return len(failedNameList) == 0;
 		return False;
 
 	# 校验import模块
 	def verifyModuleMap(self, obj, _retTuple = None):
-		if hasattr(obj, "checkPackageIsInstalled"):
-			jsonPath = _GG("g_ProjectPath") + "config/json/importMap.json";
-			if os.path.exists(jsonPath):
-				modNameList = [];
-				# 读取json文件
-				with open(jsonPath, "rb") as f:
-					moduleMap = json.loads(f.read().decode("utf-8", "ignore"));
-					# 校验模块
-					installedPkgDict = obj.getInstalledPackagesByPip(pythonPath = _GG("ClientConfig").Config().Get("env", "python", None))
-					for modName in moduleMap:
-						if modName not in installedPkgDict:
-							modNameList.append(modName);
-					f.close();
-				if len(modNameList) == 0:
-					return True;
-				else:
-					return False, obj.showInstallModMsgDialog, modNameList;
-		raise Exception("There is not attr of checkPackageIsInstalled in obj !");
+		modNameList = [];
+		# 校验模块
+		installedPkgDict = obj.getInstalledPackagesByPip(pythonPath = _GG("ClientConfig").Config().Get("env", "python", None))
+		for modName in _GG("AppConfig")["ModuleMap"]:
+			if modName not in installedPkgDict:
+				modNameList.append(modName);
+		if len(modNameList) > 0:
+			return False, obj.showInstallModMsgDialog, modNameList;
+		return True;
 
 	# 下载工程
 	def downloadProject(self, obj, _retTuple = None):

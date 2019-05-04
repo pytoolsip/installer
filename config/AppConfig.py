@@ -11,5 +11,11 @@ AppConfig = {
 	"CopyrightInfo" : u"Copyright(C) 2018-2019 JimDreamHeart. All Rights Reserved",
 	"ClientUrl" : "http://jimdreamheart.club/release/pytoolsip/client.zip",
 	# "CommonUrl" : "https://github.com/pytoolsip/common/archive/master.zip",
+	"ModuleMap" : {
+		"wxPython": 1,
+		"grpcio" : 1,
+		"protobuf" : 1,
+		"grpcio-tools" : 1
+	}
 };
 

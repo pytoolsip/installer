@@ -19,24 +19,21 @@ def GetConfigKeyMap():
 
 class Config(object):
 	"""docstring for Config"""
-	def __init__(self, path):
+	def __init__(self):
 		super(Config, self).__init__();
-		self.__path = path;
 		self.__initConfig__();
 
 	def __initConfig__(self):
-		self.__config = ConfigParser.RawConfigParser();
-		self.__config.read(self.__path);
+		self.__config = {};
 
 	def Set(self, section, option, value):
-		if not self.__config.has_section(section):
-			self.__config.add_section(section);
-		self.__config.set(section, option, value);
-		self.__config.write(open(self.__path, "w"), "w");
+		if section not in self.__config:
+			self.__config[section] = {};
+		self.__config[section][option] = value;
 
 	def Get(self, section, option, defaultValue = None):
-		if self.__config.has_option(section, option):
-			return self.__config.get(section, option);
+		if section in self.__config:
+			return self.__config[section].get(option, defaultValue);
 		return defaultValue;
 
 
@@ -45,8 +42,7 @@ class ClientConfig(object):
 	def __init__(self,):
 		super(ClientConfig, self).__init__();
 		# 初始化配置对象
-		confKeyMap = GetConfigKeyMap();
-		self.__config = Config(confKeyMap["Config"]);
+		self.__config = Config();
 		pass;
 
 	def Config(self):
