@@ -6,13 +6,11 @@
 import wx;
 
 # 加载工程
-from window.WindowLoader import WindowLoader;
 from core import _Global as _G;
 from core.behaviorCore.BaseBehavior import BaseBehavior;
 from core.behaviorCore.BehaviorManager import BehaviorManager;
 from core.eventDispatchCore.EventDispatcher import EventDispatcher;
 from core.eventDispatchCore.EventId import EVENT_ID;
-from core.timerCore.TimerManager import TimerManager;
 
 from config import AppConfig;
 from config import ClientConfig;
@@ -29,11 +27,6 @@ class Loader(object):
 		self.__mainPath = mainPath.replace("\\", "/");
 		_G.initGlobal_GTo_Global(); # 初始化全局变量
 		pass;
-
-	def getWindowLoader(self):
-		if not hasattr(self,"WindowLoader"):
-			self.WindowLoader = WindowLoader();
-		return self.WindowLoader;
 
 	def lockGlobal_G(self):
 		_G.lockGlobal_GTo_Global(); # 锁定全局变量
@@ -69,7 +62,6 @@ class Loader(object):
 		_G.setGlobalVarTo_Global("BehaviorManager", BehaviorManager()); # 设置组件管理器的全局变量
 		_G.setGlobalVarTo_Global("EventDispatcher", EventDispatcher()); # 设置事件分发器的全局变量
 		_G.setGlobalVarTo_Global("EVENT_ID", EVENT_ID); # 设置事件枚举Id的全局变量
-		_G.setGlobalVarTo_Global("TimerManager", TimerManager()); # 设置定时器管理器的全局变量
 		pass;
 
 	# 加载全局配置变量

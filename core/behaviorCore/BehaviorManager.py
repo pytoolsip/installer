@@ -37,17 +37,16 @@ class BehaviorManager(object):
 			behavior.setBehaviorPath(path); # 设置组件的路径
 			return behavior;
 		except Exception as e:
-			_GG("Log").w("Require behavior fail! [{}] =>".format(path), e);
+			print("Require behavior fail! [{}] =>".format(path), e);
 		return None;
 
 	# 根据组件配置require组件实例
 	def requireBehaviorByConfig(self, behaviorConfig):
 		behavior = None;
 		if isinstance(behaviorConfig, _GG("BaseBehavior")):
-			if hasattr(behaviorConfig, "_BEHAVIOR_ID_"):
-				behavior = behaviorConfig;
-			else:
-				_GG("Log").w("Bind behavior fail ! Because of no _BEHAVIOR_ID_ .");
+			behavior = behaviorConfig;
+			if not hasattr(behaviorConfig, "_BEHAVIOR_ID_"):
+				behavior.setBehaviorId("behavior_" + str(_GG("getUniqueId")())); # 设置组件的唯一ID
 		elif isinstance(behaviorConfig, str):
 			behavior = self.requireBehavior(behaviorConfig);
 		elif isinstance(behaviorConfig, dict):
@@ -85,9 +84,9 @@ class BehaviorManager(object):
 					# 保存所绑定组件实例到对象的_BEHAVIOR_DICT_
 					obj._BEHAVIOR_DICT_[behavior.getBehaviorFilePath()] = behavior;
 				else:
-					_GG("Log").w("Bind behavior fail ! Because of binded behavior[name:{}, file path:{}] in obj .".format(behavior.getBehaviorName(), behavior.getBehaviorFilePath()));
+					print("Bind behavior fail ! Because of binded behavior[name:{}, file path:{}] in obj .".format(behavior.getBehaviorName(), behavior.getBehaviorFilePath()));
 		except Exception as e:
-			_GG("Log").w("Bind behavior fail! [{}] =>".format(behaviorConfig), e);
+			print("Bind behavior fail! [{}] =>".format(behaviorConfig), e);
 		return behavior;
 
 	# 解绑组件
@@ -98,9 +97,9 @@ class BehaviorManager(object):
 				self.__behaviorBinder__.unbindBehaviorToObj(behavior, obj);
 				return True;
 			else:
-				_GG("Log").w("UnBind behavior[name:{}, file path:{}] fail ! Because behavior is not base on BaseBehavior .".format(behavior.getBehaviorName(), behavior.getBehaviorFilePath()));
+				print("UnBind behavior[name:{}, file path:{}] fail ! Because behavior is not base on BaseBehavior .".format(behavior.getBehaviorName(), behavior.getBehaviorFilePath()));
 		except Exception as e:
-			_GG("Log").w("UnBind behavior fail! =>", e);
+			print("UnBind behavior fail! =>", e);
 		return False;
 
 	# 绑定依赖组件

@@ -8,7 +8,7 @@ import wx;
 
 from core._Global import _GG;
 
-from InstallerGaugeViewUI import *;
+from view.InstallerGaugeView.InstallerGaugeViewUI import *;
 
 def getRegisterEventMap(G_EVENT):
 	return {

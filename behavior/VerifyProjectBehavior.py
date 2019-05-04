@@ -14,6 +14,10 @@ import wx,json,os,shutil;
 from core._Global import _GG;
 from function.base import *;
 
+from behavior.VerifyEnvBehavior import VerifyEnvBehavior;
+from behavior.InstallPyPkgBehavior import InstallPyPkgBehavior;
+from behavior.UpDownloadBehavior import UpDownloadBehavior;
+
 def __getExposeData__():
 	return {
 		# "exposeDataName" : {},
@@ -31,20 +35,7 @@ def __getExposeMethod__(DoType):
 	};
 
 def __getDepends__():
-	return [
-		{
-			"path" : "VerifyEnvBehavior", 
-			"basePath" : _GG("g_ProjectPath") + "behavior/",
-		},
-		{
-			"path" : "InstallPyPkgBehavior", 
-			"basePath" : _GG("g_ProjectPath") + "behavior/",
-		},
-		{
-			"path" : "UpDownloadBehavior", 
-			"basePath" : _GG("g_ProjectPath") + "behavior/",
-		},
-	];
+	return [VerifyEnvBehavior(), InstallPyPkgBehavior(), UpDownloadBehavior()];
 
 class VerifyProjectBehavior(_GG("BaseBehavior")):
 	def __init__(self):
@@ -54,7 +45,7 @@ class VerifyProjectBehavior(_GG("BaseBehavior")):
 
 	# 默认方法【obj为绑定该组件的对象，argList和argDict为可变参数，_retTuple为该组件的前个函数返回值】
 	# def defaultFun(self, obj, *argList, _retTuple = None, **argDict):
-	# 	_GG("Log").i(obj._className_);
+	# 	print(obj._className_);
 	# 	pass;
 
 	def showEntryPyPathDialog(self, obj, _retTuple = None):

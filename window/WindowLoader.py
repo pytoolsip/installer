@@ -4,6 +4,8 @@ import wx;
 from core._Global import _GG;
 from function.base import *;
 
+from window.InstallerWindow.InstallerWindowCtr import InstallerWindowCtr;
+
 class WindowLoader(object):
 	def __init__(self):
 		super(WindowLoader, self).__init__();
@@ -20,7 +22,7 @@ class WindowLoader(object):
 		self.__mainApp.MainLoop();
 
 	def createWindow(self):
-		self.__windowCtr = CreateCtr(_GG("g_ProjectPath") + "window/InstallerWindow", None);
+		self.__windowCtr = InstallerWindowCtr();
 
 	def runWindow(self):
 		self.__windowCtr.getUI().Centre();

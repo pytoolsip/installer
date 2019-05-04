@@ -81,7 +81,6 @@ class InstallPyPkgBehavior(_GG("BaseBehavior")):
 		return isInstalled;
 
 	def installPipByEasyInstall(self, obj, pythonPath = None, _retTuple = None):
-		_GG("Log").i(pythonPath);
 		if pythonPath and len(pythonPath) > 0:
 			if os.system(pythonPath.replace("\\", "/") + "/Scripts/easy_install.exe pip") == 0:
 				return True;

@@ -114,7 +114,7 @@ class BehaviorBinder(object):
 				frontBehaviorInfoList, overrideBehaviorInfoList, rearBehaviorInfoList = self.splitBehaviorInfosByMethodType(methodInfo["behaviorInfos"]);
 				# 判断是否有覆写函数
 				if len(overrideBehaviorInfoList) > 0:
-					_GG("Log").w("The behavior(id : \"{0}\") would override the method key of \"{1}\"!".format(overrideBehaviorInfoList[0]["behaviorId"], obj._className_));
+					print("The behavior(id : \"{0}\") would override the method key of \"{1}\"!".format(overrideBehaviorInfoList[0]["behaviorId"], obj._className_));
 					return overrideBehaviorInfoList[0]["function"](obj, *argList, **argDict);
 				# 返回值
 				_retTuple = None;
@@ -135,7 +135,7 @@ class BehaviorBinder(object):
 	def setNewDataByDataKey(self, obj, dataKey):
 		dataInfo = obj.behavior_exposeDataDict__[dataKey];
 		if len(dataInfo["behaviorInfos"]) > 0:
-			_GG("Log").w("The behavior(id : \"{0}\") is setting the data key of \"{1}\"!".format(dataInfo["behaviorInfos"][-1]["behaviorId"], obj._className_));
+			print("The behavior(id : \"{0}\") is setting the data key of \"{1}\"!".format(dataInfo["behaviorInfos"][-1]["behaviorId"], obj._className_));
 			setattr(obj, dataKey, dataInfo["behaviorInfos"][-1]["data"]);
 			obj.behavior_exposeDataDict__[dataKey]["curBehaviorId"] = dataInfo["behaviorInfos"][-1]["behaviorId"];
 

@@ -27,7 +27,7 @@ class InstallerWindowUI(wx.Frame):
 		pass;
 
 	def createViewCtrs(self):
-		self.getCtr().createCtrByKey("InstallerGaugeView", _GG("g_ProjectPath") + "view/InstallerGaugeView", params = {"size" : (self.GetSize()[0], -1)}); # , parent = self, params = {}
+		self.getCtr().createInstallerGaugeViewCtr("InstallerGaugeView", params = {"size" : (self.GetSize()[0], -1)});
 		self.createTitle();
 		self.createReverifyButton();
 		self.createDetailTextCtrl();

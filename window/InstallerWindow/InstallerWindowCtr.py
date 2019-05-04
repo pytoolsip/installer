@@ -7,7 +7,12 @@ import os,copy,threading;
 import wx;
 
 from core._Global import _GG;
-from InstallerWindowUI import *;
+
+from window.InstallerWindow.InstallerWindowUI import *;
+
+from view.InstallerGaugeView.InstallerGaugeViewCtr import InstallerGaugeViewCtr;
+
+from behavior.VerifyProjectBehavior import VerifyProjectBehavior;
 
 class InstallerWindowCtr(object):
 	"""docstring for InstallerWindowCtr"""
@@ -64,8 +69,13 @@ class InstallerWindowCtr(object):
 		self.__ui.updateWindow(data);
 
 	def bindBehaviors(self):
-		_GG("BehaviorManager").bindBehavior(self.getUI(), {"path" : _GG("g_ProjectPath") + "behavior/VerifyProjectBehavior"});
+		_GG("BehaviorManager").bindBehavior(self.getUI(), VerifyProjectBehavior());
 		pass;
+
+	def createInstallerGaugeViewCtr(self, key, parent = None, params = {}):
+		if not parent:
+			parent = self.getUI();
+		self.__CtrMap[key] = InstallerGaugeViewCtr(parent, params = params);
 
 	# 重新校验按钮回调
 	def onReverifyButton(self, event = None):

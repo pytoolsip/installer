@@ -113,7 +113,7 @@ class EventDispatcher(object):
 						else:
 							raise Exception("It calls the function(\"{0}\") of object(id:\"{1}\") in recursion !".format(listener["callbackName"], id(targetObj)));
 			else:
-				_GG("Log").w("It has not event(\"{0}\") to dispatch !".format(eventId));
+				print("It has not event(\"{0}\") to dispatch !".format(eventId));
 			self.__dispatchDepth -= 1;
 			pass;
 		except Exception as e:
