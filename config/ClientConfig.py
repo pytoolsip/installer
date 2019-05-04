@@ -12,11 +12,6 @@ except Exception as e:
 from core._Global import _GG;
 from function.base import *;
 
-def GetConfigKeyMap():
-	return {
-		"Config" : _GG("g_ProjectPath") + "config/ini/config.ini",
-	};
-
 class Config(object):
 	"""docstring for Config"""
 	def __init__(self):
