@@ -9,5 +9,7 @@ import wx;
 AppConfig = {
 	"AppTitle" : u"PyToolsIP Installer",
 	"CopyrightInfo" : u"Copyright(C) 2018-2019 JimDreamHeart. All Rights Reserved",
+	"ClientUrl" : "http://jimdreamheart.club/release/pytoolsip/client.zip",
+	# "CommonUrl" : "https://github.com/pytoolsip/common/archive/master.zip",
 };
 

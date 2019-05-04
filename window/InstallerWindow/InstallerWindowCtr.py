@@ -110,7 +110,7 @@ class InstallerWindowCtr(object):
 			threading.Thread(target = self.handleScheduleTask, args = (taskInfo, scheduleTaskList, )).start();
 		else:
 			self.getCtrByKey("InstallerGaugeView").updateView({
-				"text" : "完成校验，并成功下载工程。",
+				"text" : "已完成安装，开始运行PyToolsIP。",
 				"gauge" : 1,
 			});
 			if hasattr(self, "launcherCallbackInfo"):
@@ -166,9 +166,6 @@ class InstallerWindowCtr(object):
 				isContinue = result;
 		return isContinue, taskResult;
 
-	def downloadProject(self):
-		return True;
-
 	# 校验环境
 	def verifyEnv(self):
 		self.addScheduleTask({
@@ -196,8 +193,8 @@ class InstallerWindowCtr(object):
 			},
 		});
 		self.addScheduleTask({
-			"scheduleTask" : self.downloadProject,
-			"text" : "正在下载工程",
+			"scheduleTask" : self.getUI().downloadProject,
+			"text" : "正在检查并下载工程",
 			"failInfo" : {
 				"text" : "下载工程失败！",
 				# "failCallback" : self.showInstallModMsgDialog,

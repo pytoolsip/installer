@@ -55,7 +55,7 @@ class InstallerWindowUI(wx.Frame):
 		self.__title.SetFont(font);
 
 	def createReverifyButton(self):
-		self.__reverifyButton = wx.Button(self, label = u"重新校验", size = (-1, 32));
+		self.__reverifyButton = wx.Button(self, label = u"重新安装", size = (-1, 32));
 		self.__reverifyButton.Bind(event = wx.EVT_BUTTON, handler = self.getCtr().onReverifyButton);
 		wx.CallAfter(self.showReverifyButton, False);
 

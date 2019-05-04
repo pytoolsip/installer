@@ -3,7 +3,13 @@
 # @Date:   2019-05-03 19:40:59
 # @Last Modified by:   Administrator
 # @Last Modified time: 2019-05-03 19:40:59
-import wx,json;
+
+try:
+	import ConfigParser;
+except Exception as e:
+	import configparser as ConfigParser;
+
+import wx,json,os,shutil;
 
 from _Global import _GG;
 from function.base import *;
@@ -21,6 +27,7 @@ def __getExposeMethod__(DoType):
 		"showEntryPyPathDialog" : DoType.AddToRear,
 		"showInstallPipMsgDialog" : DoType.AddToRear,
 		"showInstallModMsgDialog" : DoType.AddToRear,
+		"downloadProject" : DoType.AddToRear,
 	};
 
 def __getDepends__():
@@ -31,6 +38,10 @@ def __getDepends__():
 		},
 		{
 			"path" : "InstallPyPkgBehavior", 
+			"basePath" : _GG("g_ProjectPath") + "behavior/",
+		},
+		{
+			"path" : "UpDownloadBehavior", 
 			"basePath" : _GG("g_ProjectPath") + "behavior/",
 		},
 	];
@@ -132,3 +143,80 @@ class VerifyProjectBehavior(_GG("BaseBehavior")):
 				else:
 					return False, obj.showInstallModMsgDialog, modNameList;
 		raise Exception("There is not attr of checkPackageIsInstalled in obj !");
+
+	# 下载工程
+	def downloadProject(self, obj, _retTuple = None):
+		clientPath = _GG("ClientConfig").Config().Get("pytoolsip", "client", None);
+		if clientPath:
+			if wx.MessageDialog(obj, "检测到已安装PyToolsIP，是否直接启动？", "检测PyToolsIP工程", style = wx.YES_NO|wx.ICON_QUESTION).ShowModal() == wx.ID_YES:
+				os.system("cd /d {}&start run.vbs".format(os.path.join(clientPath, "run")));
+				return True;
+			obj.showDetailTextCtrl(text = "您已安装了PyToolsIP，此次安装失败！");
+			return False;
+		dirPath, massage = "", "请选择安装路径!";
+		while not dirPath:
+			messageDialog = wx.MessageDialog(obj, massage, "安装PyToolsIP", style = wx.OK|wx.CANCEL|wx.ICON_INFORMATION);
+			if messageDialog.ShowModal() == wx.ID_OK:
+				dirPath = wx.DirSelector("选择安装路径");
+				if not dirPath:
+					massage = "安装路径不能为空，请重新选择安装路径！";
+				else:
+					# 校验文件夹
+					if os.path.exists(os.path.join(dirPath, "PyToolsIP")):
+						dirPath, massage = "", "安装路径下不能包含PyToolsIP，请重新选择安装路径！";
+			else:
+				obj.showDetailTextCtrl(text = "您取消了安装路径的选择，此次安装失败！");
+				return False;
+		# 下载的文件路径
+		filePath = os.path.join(dirPath, "pytoolsip_client.zip");
+		def onDownloadComplete(filePath):
+			# 校验文件夹
+			dirpath = os.path.join(dirPath, "PyToolsIP");
+			if not os.path.exists(dirpath):
+				os.mkdir(dirpath);
+			# 解压pytoolsip_client.zip文件
+			def afterUnzip():
+				os.remove(filePath); # 删除压缩文件
+				_GG("ClientConfig").Config().Set("pytoolsip", "client", dirpath); # 保存pytoolsip-client路径
+				# comFilePath = os.path.join(dirPath, "pytoolsip_common.zip")
+				# def onDownloadCommon(filePath):
+				# 	# 校验文件夹
+				# 	compath = os.path.join(dirpath, "assets/common");
+				# 	if os.path.exists(compath):
+				# 		shutil.rmtree(compath);
+				# 	os.mkdir(compath);
+				# 	# 解压pytoolsip_common.zip文件
+				# 	def afterUnzipCommon():
+				# 		os.remove(filePath); # 删除压缩文件
+				# 		pass;
+				# 	obj.unzipFile(filePath, compath, finishCallback = afterUnzipCommon);
+				# 	pass;
+				# obj.download(_GG("AppConfig")["CommonUrl"], comFilePath, onComplete = onDownloadCommon);
+
+				# 同步配置文件
+				self.syncConfigToClient(dirpath);
+				# 运行工程
+				os.system("cd /d {}&start run.vbs".format(os.path.join(dirpath, "run")));
+				pass;
+			obj.unzipFile(filePath, dirpath, finishCallback = afterUnzip);
+			pass;
+		obj.download(_GG("AppConfig")["ClientUrl"], filePath, onComplete = onDownloadComplete);
+		return True;
+
+	# 同步配置文件
+	def syncConfigToClient(self, clientPath):
+		cfgPath = os.path.join(clientPath, "assets/common/config/ini");
+		if not os.path.exists(cfgPath):
+			return;
+		cfgFile = os.path.join(cfgPath, "config.ini");
+		if not os.path.exists(cfgFile):
+			return;
+		# 获取配置对象
+		cfg = ConfigParser.RawConfigParser();
+		cfg.read(cfgFile);
+		# 同步python路径配置
+		if not cfg.has_section("env"):
+			cfg.add_section("env");
+		cfg.set("env", "python", _GG("ClientConfig").Config().Get("env", "python", ""));
+		# 保存配置
+		cfg.write(open(cfgFile, "w"), "w");
