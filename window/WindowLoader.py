@@ -36,6 +36,6 @@ class WindowLoader(object):
 		self.__windowCtr.handleInstallerEvent(callbackInfo = {"callback" : self.onInstall});
 
 	def onInstall(self):
-		# 延迟1s后关闭安装窗口
-		wx.CallLater(1000, self.closeWindow);
+		# 延迟500ms后关闭安装窗口
+		wx.CallLater(500, self.closeWindow);
 		pass;

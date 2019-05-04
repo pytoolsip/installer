@@ -149,7 +149,7 @@ class VerifyProjectBehavior(_GG("BaseBehavior")):
 		clientPath = _GG("ClientConfig").Config().Get("pytoolsip", "client", None);
 		if clientPath:
 			if wx.MessageDialog(obj, "检测到已安装PyToolsIP，是否直接启动？", "检测PyToolsIP工程", style = wx.YES_NO|wx.ICON_QUESTION).ShowModal() == wx.ID_YES:
-				os.system("cd /d {}&start run.vbs".format(os.path.join(clientPath, "run")));
+				os.system("cd /d {}&start pytoolsip.exe".format(clientPath));
 				return True;
 			obj.showDetailTextCtrl(text = "您已安装了PyToolsIP，此次安装失败！");
 			return False;
@@ -196,7 +196,7 @@ class VerifyProjectBehavior(_GG("BaseBehavior")):
 				# 同步配置文件
 				self.syncConfigToClient(dirpath);
 				# 运行工程
-				os.system("cd /d {}&start run.vbs".format(os.path.join(dirpath, "run")));
+				os.system("cd /d {}&start pytoolsip.exe".format(dirpath));
 				pass;
 			obj.unzipFile(filePath, dirpath, finishCallback = afterUnzip);
 			pass;
