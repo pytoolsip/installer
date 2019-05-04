@@ -4,7 +4,7 @@
 # @Last Modified by:   JinZhang
 # @Last Modified time: 2019-03-14 18:10:12
 
-from eventDispatchCore import EventId as G_EVENT;
+from core.eventDispatchCore import EventId as G_EVENT;
 
 from enum import Enum, unique;
 

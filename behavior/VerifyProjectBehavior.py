@@ -11,7 +11,7 @@ except Exception as e:
 
 import wx,json,os,shutil;
 
-from _Global import _GG;
+from core._Global import _GG;
 from function.base import *;
 
 def __getExposeData__():

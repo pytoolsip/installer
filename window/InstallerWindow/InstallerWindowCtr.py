@@ -6,7 +6,7 @@
 import os,copy,threading;
 import wx;
 
-from _Global import _GG;
+from core._Global import _GG;
 from InstallerWindowUI import *;
 
 class InstallerWindowCtr(object):

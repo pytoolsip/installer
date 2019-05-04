@@ -9,7 +9,7 @@ try:
 except Exception as e:
 	import configparser as ConfigParser;
 
-from _Global import _GG;
+from core._Global import _GG;
 from function.base import *;
 
 def GetConfigKeyMap():

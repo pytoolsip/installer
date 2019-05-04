@@ -5,7 +5,7 @@
 # @Last Modified time: 2019-05-03 17:23:43
 import wx;
 
-from _Global import _GG;
+from core._Global import _GG;
 from function.base import *;
 
 class InstallerWindowUI(wx.Frame):

@@ -7,7 +7,7 @@
 import os;
 import imp;
 
-from _Global import _GG;
+from core._Global import _GG;
 from function.base import *;
 
 def __getExposeData__():

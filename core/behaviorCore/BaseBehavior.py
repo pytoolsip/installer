@@ -6,7 +6,7 @@
 import os;
 
 from enum import Enum, unique;
-from _Global import _GG;
+from core._Global import _GG;
 
 # 枚举执行类型
 @unique

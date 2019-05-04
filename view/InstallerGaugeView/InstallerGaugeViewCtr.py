@@ -6,7 +6,7 @@
 import os;
 import wx;
 
-from _Global import _GG;
+from core._Global import _GG;
 
 from InstallerGaugeViewUI import *;
 

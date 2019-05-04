@@ -9,7 +9,7 @@ import paramiko;
 import zipfile;
 import threading;
 
-from _Global import _GG;
+from core._Global import _GG;
 from function.base import *;
 
 def __getExposeData__():

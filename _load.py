@@ -4,25 +4,15 @@
 # @Last Modified by:   JinZhang
 # @Last Modified time: 2019-03-28 18:34:16
 import wx;
-import os,sys;
-# 当前文件位置
-CURRENT_PATH = os.path.dirname(os.path.realpath(__file__));
-# 添加搜索路径
-if CURRENT_PATH not in sys.path:
-	sys.path.append(CURRENT_PATH);
-if os.path.join(CURRENT_PATH, "core") not in sys.path:
-	sys.path.append(os.path.join(CURRENT_PATH, "core"));
 
 # 加载工程
-import _Global as _G;
 from window.WindowLoader import WindowLoader;
-from behaviorCore.BaseBehavior import BaseBehavior;
-from behaviorCore.BehaviorManager import BehaviorManager;
-from eventDispatchCore.EventDispatcher import EventDispatcher;
-from eventDispatchCore.EventId import EVENT_ID;
-from hotKeyCore.HotKeyManager import HotKeyManager;
-from timerCore.TimerManager import TimerManager;
-from logCore.Logger import Logger;
+from core import _Global as _G;
+from core.behaviorCore.BaseBehavior import BaseBehavior;
+from core.behaviorCore.BehaviorManager import BehaviorManager;
+from core.eventDispatchCore.EventDispatcher import EventDispatcher;
+from core.eventDispatchCore.EventId import EVENT_ID;
+from core.timerCore.TimerManager import TimerManager;
 
 from config import AppConfig;
 from config import ClientConfig;
@@ -79,7 +69,6 @@ class Loader(object):
 		_G.setGlobalVarTo_Global("BehaviorManager", BehaviorManager()); # 设置组件管理器的全局变量
 		_G.setGlobalVarTo_Global("EventDispatcher", EventDispatcher()); # 设置事件分发器的全局变量
 		_G.setGlobalVarTo_Global("EVENT_ID", EVENT_ID); # 设置事件枚举Id的全局变量
-		_G.setGlobalVarTo_Global("HotKeyManager", HotKeyManager()); # 设置热键管理器的全局变量
 		_G.setGlobalVarTo_Global("TimerManager", TimerManager()); # 设置定时器管理器的全局变量
 		pass;
 

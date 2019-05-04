@@ -4,9 +4,9 @@
 # @Last Modified by:   JimDreamHeart
 # @Last Modified time: 2019-03-16 15:17:53
 
-from behaviorCore.BehaviorBinder import BehaviorBinder;
+from core.behaviorCore.BehaviorBinder import BehaviorBinder;
 
-from _Global import _GG;
+from core._Global import _GG;
 from function.base import *;
 
 # 扩展方法到对象

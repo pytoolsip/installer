@@ -4,7 +4,7 @@
 # @Last Modified by:   JimZhang
 # @Last Modified time: 2019-03-16 14:55:15
 
-from behaviorCore.BaseBehavior import DoType;
+from core.behaviorCore.BaseBehavior import DoType;
 
 class BehaviorBinder(object):
 	def __init__(self):
