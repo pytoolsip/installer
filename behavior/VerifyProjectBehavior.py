@@ -195,8 +195,6 @@ class VerifyProjectBehavior(_GG("BaseBehavior")):
 
 				# 同步配置文件
 				self.syncConfigToClient(dirpath);
-				# 运行工程
-				os.system("cd /d {}&start pytoolsip.exe".format(dirpath));
 				pass;
 			obj.unzipFile(filePath, dirpath, finishCallback = afterUnzip);
 			pass;

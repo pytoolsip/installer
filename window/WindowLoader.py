@@ -36,6 +36,13 @@ class WindowLoader(object):
 		self.__windowCtr.handleInstallerEvent(callbackInfo = {"callback" : self.onInstall});
 
 	def onInstall(self):
-		# 延迟500ms后关闭安装窗口
-		wx.CallLater(500, self.closeWindow);
-		pass;
+		# 判断是否完成安装
+		clientPath = _GG("ClientConfig").Config().Get("pytoolsip", "client", None);
+		if clientPath:
+			if wx.MessageDialog(self.__windowCtr.getUI(), "是否打开PyToolsIP？", "成功安装PyToolsIP", style = wx.OK|wx.CANCEL|wx.ICON_QUESTION).ShowModal() == wx.ID_OK:
+				# 运行工程
+				os.system("cd /d {}&start pytoolsip.exe".format(clientPath));
+				# 延迟100ms后关闭安装窗口
+				wx.CallLater(100, self.closeWindow);
+		else:
+			wx.CallLater(100, self.onInstall);
