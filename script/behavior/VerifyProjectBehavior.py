@@ -52,19 +52,17 @@ class VerifyProjectBehavior(_GG("BaseBehavior")):
 	def showEntryPyPathDialog(self, obj, _retTuple = None):
 		entryDialog = wx.TextEntryDialog(obj, "未检测到python运行环境，请手动输入python运行程序路径：", "校验python环境失败！");
 		if entryDialog.ShowModal() == wx.ID_OK:
-			if entryDialog.GetValue():
-				obj.showDetailTextCtrl(text = "正在设置python运行环境: {}".format(entryDialog.GetValue()));
-				_GG("ClientConfig").Config().Set("env", "python", entryDialog.GetValue()); # 保存python运行环境
-				return True;
+			obj.showDetailTextCtrl(text = "正在设置python运行环境: {}".format(entryDialog.GetValue()));
+			_GG("ClientConfig").Config().Set("env", "python", entryDialog.GetValue()); # 保存python运行环境
+			return True;
 		return False;
 
 	def showEntryPyVerPathDialog(self, obj, _retTuple = None):
 		entryDialog = wx.TextEntryDialog(obj, "检测到的python版本<3.4，请手动输入>3.4版本的python运行程序路径：", "校验python版本失败！");
 		if entryDialog.ShowModal() == wx.ID_OK:
-			if entryDialog.GetValue():
-				obj.showDetailTextCtrl(text = "正在设置python运行环境: {}".format(entryDialog.GetValue()));
-				_GG("ClientConfig").Config().Set("env", "python", entryDialog.GetValue()); # 保存python运行环境
-				return True;
+			obj.showDetailTextCtrl(text = "正在设置python运行环境: {}".format(entryDialog.GetValue()));
+			_GG("ClientConfig").Config().Set("env", "python", entryDialog.GetValue()); # 保存python运行环境
+			return True;
 		return False;
 
 	# 校验python环境
@@ -108,7 +106,7 @@ class VerifyProjectBehavior(_GG("BaseBehavior")):
 	def verifyModuleMap(self, obj, _retTuple = None):
 		modNameList = [];
 		# 校验模块
-		installedPkgDict = obj.getInstalledPackagesByPip(pythonPath = _GG("ClientConfig").Config().Get("env", "python", None))
+		installedPkgDict = obj.getInstalledPackagesByPip(pythonPath = _GG("ClientConfig").Config().Get("env", "python", None));
 		for modName in _GG("AppConfig")["ModuleMap"]:
 			if modName not in installedPkgDict:
 				modNameList.append(modName);
