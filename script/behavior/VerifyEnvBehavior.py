@@ -38,7 +38,7 @@ class VerifyEnvBehavior(_GG("BaseBehavior")):
 	# 校验python环境
 	def verifyPythonEnvironment(self, obj, pythonPath = None, _retTuple = None):
 		if pythonPath:
-			if os.system(pythonPath.replace("\\", "/") + "/python.exe -V") == 0:
+			if os.system("cd /d " + pythonPath.replace("\\", "/") + "&python.exe -V") == 0:
 				return True;
 		else:
 			if os.system("python -V") == 0:
@@ -49,18 +49,22 @@ class VerifyEnvBehavior(_GG("BaseBehavior")):
 	def verifyPythonVersion(self, obj, pythonPath = None, _retTuple = None):
 		ret = "";
 		if pythonPath:
-			ret = os.popen(pythonPath.replace("\\", "/") + "/python.exe -V").read();
+			ret = os.popen("cd /d " + pythonPath.replace("\\", "/") + "&python.exe -V").read();
 		else:
 			ret = os.popen("python -V").read();
 		if ret:
-			vList = ret.split(" ")[1].split(".");
-			if int(vList[0]) >= 3 and int(vList[1]) >= 4:
-				return True;
+			retList = ret.split(" ");
+			if len(retList) > 1:
+				vList = retList[1].split(".");
+				if len(vList) < 3:
+					return False;
+				if int(vList[0]) >= 3 and int(vList[1]) >= 4:
+					return True;
 		return False;
 
 	def verifyPipEnvironment(self, obj, pythonPath = None, _retTuple = None):
 		if pythonPath:
-			if os.system(pythonPath.replace("\\", "/") + "/Scripts/pip.exe -V") == 0:
+			if os.system("cd /d " + pythonPath.replace("\\", "/") + "/Scripts&pip.exe -V") == 0:
 				return True;
 		else:
 			if os.system("pip -V") == 0:

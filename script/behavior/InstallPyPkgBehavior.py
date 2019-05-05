@@ -42,7 +42,7 @@ class InstallPyPkgBehavior(_GG("BaseBehavior")):
 	def getInstalledPackagesByPip(self, obj, pythonPath = None, _retTuple = None):
 		installedPackageDict = {};
 		if pythonPath:
-			installedPackageReader = os.popen(pythonPath.replace("\\", "/") + "/Scripts/pip.exe freeze");
+			installedPackageReader = os.popen("cd /d " + pythonPath.replace("\\", "/") + "/Scripts&pip.exe freeze");
 		else:
 			installedPackageReader = os.popen("pip freeze");
 		installedPackageLines = installedPackageReader.read();
@@ -55,7 +55,7 @@ class InstallPyPkgBehavior(_GG("BaseBehavior")):
 
 	def installPackageByPip(self, obj, packageName, pythonPath = None, _retTuple = None):
 		if pythonPath:
-			if os.system(pythonPath.replace("\\", "/") + "/Scripts/pip.exe install " + packageName) == 0:
+			if os.system("cd /d " + pythonPath.replace("\\", "/") + "/Scripts&pip.exe install " + packageName) == 0:
 				return True;
 		else:
 			if os.system("pip install " + packageName) == 0:
@@ -64,7 +64,7 @@ class InstallPyPkgBehavior(_GG("BaseBehavior")):
 
 	def updatePipVersion(self, obj, pythonPath = None, _retTuple = None):
 		if pythonPath:
-			if os.system(pythonPath.replace("\\", "/") + "/Scripts/python.exe -m pip install --upgrade pip") == 0:
+			if os.system("cd /d " + pythonPath.replace("\\", "/") + "&python.exe -m pip install --upgrade pip") == 0:
 				return True;
 		else:
 			if os.system("python -m pip install --upgrade pip") == 0:
@@ -82,7 +82,7 @@ class InstallPyPkgBehavior(_GG("BaseBehavior")):
 
 	def installPipByEasyInstall(self, obj, pythonPath = None, _retTuple = None):
 		if pythonPath and len(pythonPath) > 0:
-			if os.system(pythonPath.replace("\\", "/") + "/Scripts/easy_install.exe pip") == 0:
+			if os.system("cd /d " + pythonPath.replace("\\", "/") + "/Scripts&easy_install.exe pip") == 0:
 				return True;
 		else:
 			if os.system("easy_install pip") == 0:

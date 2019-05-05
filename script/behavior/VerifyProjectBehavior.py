@@ -29,6 +29,7 @@ def __getExposeMethod__(DoType):
 		"verifyPipEnv" : DoType.AddToRear,
 		"verifyModuleMap" : DoType.AddToRear,
 		"showEntryPyPathDialog" : DoType.AddToRear,
+		"showEntryPyVerPathDialog" : DoType.AddToRear,
 		"showInstallPipMsgDialog" : DoType.AddToRear,
 		"showInstallModMsgDialog" : DoType.AddToRear,
 		"downloadProject" : DoType.AddToRear,
