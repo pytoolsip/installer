@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Administrator
 # @Date:   2019-05-03 19:40:59
-# @Last Modified by:   Administrator
-# @Last Modified time: 2019-05-03 19:40:59
+# @Last Modified by:   JinZhang
+# @Last Modified time: 2019-05-06 11:27:16
 
 try:
 	import ConfigParser;
@@ -94,7 +94,7 @@ class VerifyProjectBehavior(_GG("BaseBehavior")):
 			obj.showDetailTextCtrl(text = "开始安装校验失败的模块...");
 			failedNameList = [];
 			for modName in modNameList:
-				if obj.installPackageByPip(modName):
+				if obj.installPackageByPip(modName, pythonPath = _GG("ClientConfig").Config().Get("env", "python", None)):
 					obj.showDetailTextCtrl(text = "安装“{}”模块成功。".format(modName));
 				else:
 					obj.showDetailTextCtrl(text = "安装“{}”模块失败！".format(modName));
