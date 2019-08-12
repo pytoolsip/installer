@@ -1,5 +1,7 @@
 AppConfig = {
 	"Title" : u"PyToolsIP Installer",
 	"Size" : (640, 420),
-	"CopyrightInfo" : u"Copyright(C) 2018-2019 JimDreamHeart. All Rights Reserved",
+	"Copyright" : u"Copyright(C) 2018-2019 JimDreamHeart. All Rights Reserved",
+	"WinTitle" : u"PyToolsIP【Python工具集成平台】",
+	"ContentColor" : "#CDCDCD",
 };
