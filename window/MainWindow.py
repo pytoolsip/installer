@@ -4,6 +4,7 @@ from tkinter import ttk;
 from config.AppConfig import *; # local
 
 from view.VerSelector import *; # local
+from view.DownloadUnZip import *; # local
 
 class MainWindow(Frame):
     def __init__(self, parent):
@@ -20,7 +21,14 @@ class MainWindow(Frame):
         # 初始化下拉框
         self.__vc = VerSelector(self);
         self.__vc.pack();
+        # 点击下载回调
+        self.__vc.onInstall = self.install;
         pass;
     
-    def install(self):
+    def install(self, path, version):
+        print("install:", path, version);
+        self.__vc.pack_forget();
+        self.__du = DownloadUnZip(self);
+        self.__du.pack();
+        self.__du.download()
         pass;
