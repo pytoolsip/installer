@@ -11,7 +11,7 @@ def requestJson(data):
     url = AppConfig["reqInfoUrl"];
     try:
         resp = request.urlopen(f"{url}?"+"&".join(kv));
-        return json.loads(resp.read());
+        return True, json.loads(resp.read());
     except Exception as e:
         print(e);
-    return [];
+    return False, None;
