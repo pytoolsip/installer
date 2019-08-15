@@ -8,7 +8,6 @@ import os;
 from config.AppConfig import *; # local
 from utils.urlUtil import *; # local
 from utils.threadUtil import *; # local
-from event.Instance import *; # local
 
 class VerSelector(Frame):
     def __init__(self, parent):
@@ -16,26 +15,7 @@ class VerSelector(Frame):
         self.__parent = parent;
         self.__thread = None;
         self.pack(expand = YES, fill = BOTH);
-        self.registerEvent();
         self.initView();
-
-    def __del__(self):
-        self.stopThread();
-        self.unregisterEvent();
-
-    def onDestroy(self, data):
-        self.stopThread();
-
-    def registerEvent(self):
-        EventSystem.register(EventID.WM_DELETE_WINDOW, self, "onDestroy");
-
-    def unregisterEvent(self):
-        EventSystem.unregister(EventID.WM_DELETE_WINDOW, self, "onDestroy");
-
-    def stopThread(self):
-        if self.__thread:
-            stopThread(self.__thread);
-            self.__thread = None;
         
     def initView(self):
         Label(self, text="- 选择安装 -", font=("宋体", 12), fg="gray", bg= AppConfig["ContentColor"]).pack(pady = (30, 10));
@@ -83,9 +63,12 @@ class VerSelector(Frame):
     # 启动新线程请求版本列表
     def requestVerListByThread(self):
         self.__updateBtn.configure(state = DISABLED); # 不允许点击更新版本列表按钮
-        self.stopThread(); # 停止之前的子线程
+        # 停止之前的子线程
+        if self.__thread:
+            stopThread(self.__thread);
         # 开始请求版本列表的新子线程
         self.__thread = threading.Thread(target = self.requestVerList);
+        self.__thread.setDaemon(True)
         self.__thread.start();
 
     # 请求平台版本列表

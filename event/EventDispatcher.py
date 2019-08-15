@@ -95,25 +95,24 @@ class EventDispatcher(object):
 			self.__dispatchDepth += 1;
 			eventId = event.value;
 			listeners = self.__listeners[eventId];
-			if len(listeners) > 0:
-				for listener in listeners:
-					if listener["state"] == EventState.NormalState:
-						targetObj = listener["target"];
-						# 判断并初始化targetObj的EventIdListByDispatched_属性
-						if not hasattr(targetObj, "_EventKeyListByDispatched_"):
-							targetObj._EventKeyListByDispatched_ = [];
-						# 判断eventKey是否在targetObj.EventIdListByDispatched_中
-						eventKey = str(eventId) + listener["callbackName"];
-						if eventKey not in targetObj._EventKeyListByDispatched_:
-							targetObj._EventKeyListByDispatched_.append(eventKey);
-							# 执行所注册事件的方法
-							getattr(targetObj, listener["callbackName"])(data);
-							# 移除targetObj的EventKeyListByDispatched_属性
-							targetObj._EventKeyListByDispatched_.remove(eventKey);
-						else:
-							raise Exception("It calls the function(\"{0}\") of object(id:\"{1}\") in recursion !".format(listener["callbackName"], id(targetObj)));
-			else:
-				print("It has not event(\"{0}\") to dispatch !".format(eventId));
+			if len(listeners) == 0:
+				return;
+			for listener in listeners:
+				if listener["state"] == EventState.NormalState:
+					targetObj = listener["target"];
+					# 判断并初始化targetObj的EventIdListByDispatched_属性
+					if not hasattr(targetObj, "_EventKeyListByDispatched_"):
+						targetObj._EventKeyListByDispatched_ = [];
+					# 判断eventKey是否在targetObj.EventIdListByDispatched_中
+					eventKey = str(eventId) + listener["callbackName"];
+					if eventKey not in targetObj._EventKeyListByDispatched_:
+						targetObj._EventKeyListByDispatched_.append(eventKey);
+						# 执行所注册事件的方法
+						getattr(targetObj, listener["callbackName"])(data);
+						# 移除targetObj的EventKeyListByDispatched_属性
+						targetObj._EventKeyListByDispatched_.remove(eventKey);
+					else:
+						raise Exception("It calls the function(\"{0}\") of object(id:\"{1}\") in recursion !".format(listener["callbackName"], id(targetObj)));
 			self.__dispatchDepth -= 1;
 			pass;
 		except Exception as e:

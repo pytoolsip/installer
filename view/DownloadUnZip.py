@@ -18,27 +18,10 @@ class DownloadUnZip(Frame):
         self.__parent = parent;
         self.__taskList = [];
         self.__taskCnt = 0;
+        self.__thread = None;
         self.pack(expand = YES, fill = BOTH);
         self.update();
         self.initView();
-
-    def __del__(self):
-        self.stopThread();
-        self.unregisterEvent();
-
-    def onDestroy(self, data):
-        self.stopThread();
-
-    def registerEvent(self):
-        EventSystem.register(EventID.WM_DELETE_WINDOW, self, "onDestroy");
-
-    def unregisterEvent(self):
-        EventSystem.unregister(EventID.WM_DELETE_WINDOW, self, "onDestroy");
-
-    def stopThread(self):
-        if self.__thread:
-            stopThread(self.__thread);
-            self.__thread = None;
             
     def initView(self):
         Label(self, text="- 下载与解压 -", font=("宋体", 12), fg="gray", bg= AppConfig["ContentColor"]).pack(pady = (30, 10));
@@ -110,8 +93,11 @@ class DownloadUnZip(Frame):
     def __unzip__(self, filepath, dirpath):
         if not os.path.exists(filepath):
             return;
-        self.stopThread(); # 停止之前的进程
+        # 停止之前的进程
+        if self.__thread:
+            stopThread(self.__thread);
         self.__thread = threading.Thread(target = self._unzipFile_, args = (filepath, dirpath));
+        self.__thread.setDaemon(True)
         self.__thread.start();
 
     # 解压回调
@@ -126,3 +112,4 @@ class DownloadUnZip(Frame):
             self.__progress.set(self.getLastProgress() + completeCnt/totalCnt * 100);
         zf.close();
         self.__tips.set(f"完成解压：{filepath}");
+        self.__thread = None;
