@@ -3,10 +3,13 @@ from tkinter import ttk;
 from tkinter.filedialog import askdirectory;
 import threading;
 from urllib import request;
+import threading;
 import zipfile;
+import os;
 
 from config.AppConfig import *; # local
 from utils.urlUtil import *; # local
+from utils.threadUtil import *; # local
 from event.Instance import *; # local
 
 class DownloadUnZip(Frame):
@@ -39,8 +42,14 @@ class DownloadUnZip(Frame):
             
     def initView(self):
         Label(self, text="- 下载与解压 -", font=("宋体", 12), fg="gray", bg= AppConfig["ContentColor"]).pack(pady = (30, 10));
+        # 初始化提示
+        self.initTips();
         # 初始化进度条
         self.initProgressbar();
+
+    def initTips(self):
+        self.__tips = StringVar();
+        Label(self, textvariable=self.__tips, font=("宋体", 10), bg= AppConfig["ContentColor"]).pack(pady = (30, 10));
 
     def initProgressbar(self):
         self.__progress = IntVar();
@@ -64,36 +73,56 @@ class DownloadUnZip(Frame):
 
     def runTaskList(self):
         if len(self.__taskList) > 0:
+            self.__progress.set((self.__taskCnt - len(self.__taskList))/self.__taskCnt * 100);
             task = self.__taskList.pop(0);
             if task["type"] == "download":
                 self.__download__(task["url"], task["filepath"]);
             elif task["type"] == "unzip":
                 self.__unzip__(task["filepath"], task["dirpath"]);
-        elif callable(self.__onComplete):
-            self.__onComplete(); # 完成任务列表后回调
+        else:
+            self.__progress.set(100);
+            if callable(self.__onComplete):
+                self.__onComplete(); # 完成任务列表后回调
+
+    # 获取上次的进度
+    def getLastProgress(self):
+        return (self.__taskCnt - len(self.__taskList))/self.__taskCnt * 100;
 
     # 下载文件
     def __download__(self, url, filepath):
+        self.__tips.set(f"正在下载：{url}");
         request.urlretrieve(url, filepath, self._schedule_);
 
+    # 下载回调
     def _schedule_(self, block, size, totalSize):
-        rate = block*size / totalSize;
+        rate = block*size / totalSize * 100;
+        self.__progress.set(self.getLastProgress() + rate);
+        tips = re.sub("\[%d+\%\]", "", self.__tips.get());
+        if block*size < totalSize:
+            rate = round(rate, 2);
+            self.__tips.set(f"{tips} [{rate}%]");
+        else:
+            url = tips.replace("正在下载：", "").strip();
+            self.__tips.set(f"完成下载：{url}");
         pass;
 
     # 解压文件
     def __unzip__(self, filepath, dirpath):
-        if not os.path.exists(path):
+        if not os.path.exists(filepath):
             return;
         self.stopThread(); # 停止之前的进程
         self.__thread = threading.Thread(target = self._unzipFile_, args = (filepath, dirpath));
         self.__thread.start();
 
-    def _unzipFile_(filepath, dirpath):
+    # 解压回调
+    def _unzipFile_(self, filepath, dirpath):
         zf = zipfile.ZipFile(filepath, "r");
-        totalLen = len(zf.namelist());
-        completeLen = 0;
+        totalCnt = len(zf.namelist());
+        completeCnt = 0;
         for file in zf.namelist():
-            # callback(completeLen/totalLen, file); # 回调函数
+            self.__tips.set(f"正在解压：{file}");
             zf.extract(file, dirpath);
-            completeLen += 1;
+            completeCnt += 1;
+            self.__progress.set(self.getLastProgress() + completeCnt/totalCnt * 100);
         zf.close();
+        self.__tips.set(f"完成解压：{filepath}");
