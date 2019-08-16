@@ -1,5 +1,8 @@
 from tkinter import *
 from tkinter import messagebox;
+import time;
+import os;
+import base64;
 
 from event.Instance import *; # local
 from config.AppConfig import *; # local
@@ -9,6 +12,7 @@ class MainApp(Tk):
         super(MainApp, self).__init__();
         self.initTitle();
         self.initSize();
+        self.initIcon();
         self.protocol("WM_DELETE_WINDOW", self.onDestroy);
         self.registerEvent();
 
@@ -30,6 +34,16 @@ class MainApp(Tk):
         width, height = AppConfig["Size"];
         posX, posY = (self.winfo_screenwidth() - width) / 2, (self.winfo_screenheight() - height) / 2;
         self.geometry("%dx%d+%d+%d" % (width, height, posX, posY));
+
+    # 初始化图标
+    def initIcon(self):
+        if "AppIcon" in PngConfig:
+            img = base64.b64decode(PngConfig["AppIcon"].encode());
+            fileName = f"temp_dzjh_{time.time()}.ico";
+            with open(fileName, 'wb') as f:
+                f.write(img);
+            self.iconbitmap(fileName);
+            os.remove(fileName);
 
     # 关闭窗口
     def onDestroy(self):
