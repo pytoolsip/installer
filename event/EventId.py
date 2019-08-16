@@ -23,3 +23,5 @@ class EVENT_ID(Enum):
 		return getNewEventId();
 
 	WM_DELETE_WINDOW = getNewEventId(); # 关闭窗口事件
+	
+	DO_QUIT_APP = getNewEventId(); # 主动退出窗口事件

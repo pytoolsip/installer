@@ -73,7 +73,7 @@ class VerSelector(Frame):
 
     # 请求平台版本列表
     def requestVerList(self):
-        ret, verList = requestJson({"req":"verList", "key":"ptip"});
+        ret, verList = requestJson({"key":"ptip", "req":"verList"});
         if ret:
             self.__cbb.configure(value = verList);
             if len(verList) > 0:

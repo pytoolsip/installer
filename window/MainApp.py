@@ -10,6 +10,16 @@ class MainApp(Tk):
         self.initTitle();
         self.initSize();
         self.protocol("WM_DELETE_WINDOW", self.onDestroy);
+        self.registerEvent();
+
+    def __del__(self):
+        self.unregisterEvent();
+
+    def registerEvent(self):
+        EventSystem.register(EventID.DO_QUIT_APP, self, "onQuit");
+
+    def unregisterEvent(self):
+        EventSystem.unregister(EventID.DO_QUIT_APP, self, "onQuit");
 
     # 设置标题
     def initTitle(self):
@@ -21,7 +31,12 @@ class MainApp(Tk):
         posX, posY = (self.winfo_screenwidth() - width) / 2, (self.winfo_screenheight() - height) / 2;
         self.geometry("%dx%d+%d+%d" % (width, height, posX, posY));
 
+    # 关闭窗口
     def onDestroy(self):
         if messagebox.askokcancel(title="取消安装", message="是否确定退出本次安装？"):
             EventSystem.dispatch(EventID.WM_DELETE_WINDOW, {});
             self.destroy();
+
+    # 退出窗口
+    def onQuit(self, data = None):
+        self.quit();
