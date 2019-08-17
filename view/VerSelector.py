@@ -50,9 +50,9 @@ class VerSelector(Frame):
             self.__etVal.set(path);
 
     def __onInstall__(self):
-        # if not self.__cbb.get().strip():
-        #     messagebox.showinfo(title="安装提示", message="请求版本信息不能为空！");
-        #     return;
+        if not self.__cbb.get().strip():
+            messagebox.showinfo(title="安装提示", message="请求版本信息不能为空！");
+            return;
         if not os.path.exists(self.__etVal.get().strip()):
             messagebox.showinfo(title="安装提示", message="所选择的安装路径不存在！");
             return;

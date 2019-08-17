@@ -57,8 +57,9 @@ class MainWindow(Frame):
         pass;
 
     def initTips(self):
-        self.__tips = StringVar();
-        Label(self, textvariable=self.__tips, font=("宋体", 10), bg= AppConfig["ContentColor"]).pack(pady = (30, 10));
+        self.__tipsVal = StringVar();
+        self.__tips = Label(self, textvariable=self.__tipsVal, font=("宋体", 10), bg= AppConfig["ContentColor"]);
+        self.__tips.pack(pady = (30, 10));
     
     def onInstall(self, path, version):
         self.__basePath = path; # 重置基本路径
@@ -69,7 +70,7 @@ class MainWindow(Frame):
     # 启动新线程下载平台
     def downloadIPByThread(self, path, version):
         print("downloadIP:", path, version);
-        self.__tips.set(f"开始安装平台【{version}】...");
+        self.__tipsVal.set(f"准备开始下载平台【{version}】...");
         # 停止之前的子线程
         self.stopThread();
         # 开始请求版本列表的新子线程
@@ -80,14 +81,17 @@ class MainWindow(Frame):
     # 下载平台
     def downloadIP(self, path, version):
         ret, resp = requestJson({"key":"ptip", "req":"urlList", "version":version});
-        self.__tips.set("");
+        self.__tips.pack_forget();
         if ret:
             urlList = resp.get("urlList", []);
-            self.__du = DownloadUnZip(self);
-            self.__du.pack();
-            def onComplete():
-                self.onComplete(path, version);
-            self.__du.start(urlList, path, onComplete = onComplete);
+            if len(urlList) > 0:
+                self.__du = DownloadUnZip(self);
+                self.__du.pack();
+                def onComplete():
+                    self.onComplete(path, version);
+                self.__du.start(urlList, path, onComplete = onComplete);
+            else:
+                messagebox.showerror(title="数据异常", message="下载平台失败！");
         else:
             messagebox.showerror(title="网络异常", message="下载平台失败！");
         # 置空线程对象
@@ -95,9 +99,14 @@ class MainWindow(Frame):
 
     def onComplete(self, path, version):
         self.__du.pack_forget();
-        self.__tips.set(f"平台【{version}】安装完成。\n安装路径为：{path}");
-        Button(self, text="打开程序目录", command=self.onOpenIPPath).pack();
+        self.__tips.pack(pady = (80, 10));
+        self.__tipsVal.set(f"平台【{version}】下载安装完成！\n安装路径为：{path}");
+        Button(self, text="打开安装路径", command=self.onOpenIPPath).pack(pady = (40, 10));
+        pass;
 
-    def onOpenIPPath(self, path):
-        os.system(f"explorer {path}");
-        EventSystem.dispatch(EventID.DO_QUIT_APP, {}); # 确定退出窗口
+    def onOpenIPPath(self):
+        if self.__basePath and os.path.exists(self.__basePath):
+            os.system("explorer "+self.__basePath);
+            EventSystem.dispatch(EventID.DO_QUIT_APP, {}); # 确定退出窗口
+        else:
+            messagebox.showwarning(title="路径缺失", message="打开安装路径失败！");
