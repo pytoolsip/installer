@@ -1,5 +1,4 @@
 from tkinter import *
-from tkinter import messagebox;
 import time;
 import os;
 import base64;
@@ -47,9 +46,8 @@ class MainApp(Tk):
 
     # 关闭窗口
     def onDestroy(self):
-        if messagebox.askokcancel(title="取消安装", message="是否确定退出本次安装？"):
-            EventSystem.dispatch(EventID.WM_DELETE_WINDOW, {});
-            self.destroy();
+        EventSystem.dispatch(EventID.WM_DELETE_WINDOW, {});
+        self.destroy();
 
     # 退出窗口
     def onQuit(self, data = None):

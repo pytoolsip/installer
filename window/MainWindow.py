@@ -1,6 +1,8 @@
 from tkinter import *;
 from tkinter import ttk;
+from tkinter import messagebox;
 import os;
+import shutil;
 
 from config.AppConfig import *; # local
 from event.Instance import *; # local
@@ -13,8 +15,34 @@ class MainWindow(Frame):
         super(MainWindow, self).__init__(parent);
         self.__parent = parent;
         self.__thread = None;
+        self.__basePath = "";
         self.pack(expand = YES, fill = BOTH);
         self.initWindow();
+        self.registerEvent();
+
+    def __del__(self):
+        self.stopThread();
+        self.unregisterEvent();
+
+    def onDestroy(self, data):
+        if self.__thread: # 判断下载线程是否还存在
+            if messagebox.askokcancel(title="取消安装", message="正在下载安装中，是否确定要取消本次安装？"):
+                self.stopThread(); # 停止子线程
+                # 移除安装路径内容
+                if self.__basePath and os.path.exists(self.__basePath):
+                    shutil.rmtree(self.__basePath);
+                    self.__basePath = "";
+
+    def registerEvent(self):
+        EventSystem.register(EventID.WM_DELETE_WINDOW, self, "onDestroy");
+
+    def unregisterEvent(self):
+        EventSystem.unregister(EventID.WM_DELETE_WINDOW, self, "onDestroy");
+
+    def stopThread(self):
+        if self.__thread:
+            stopThread(self.__thread);
+            self.__thread = None;
         
     def initWindow(self):
         # 初始化标题
@@ -33,17 +61,17 @@ class MainWindow(Frame):
         Label(self, textvariable=self.__tips, font=("宋体", 10), bg= AppConfig["ContentColor"]).pack(pady = (30, 10));
     
     def onInstall(self, path, version):
+        self.__basePath = path; # 重置基本路径
         self.__vc.pack_forget();
         self.initTips();
-        self.downloadIPByThread();
+        self.downloadIPByThread(path, version);
 
     # 启动新线程下载平台
     def downloadIPByThread(self, path, version):
         print("downloadIP:", path, version);
         self.__tips.set(f"开始安装平台【{version}】...");
         # 停止之前的子线程
-        if self.__thread:
-            stopThread(self.__thread);
+        self.stopThread();
         # 开始请求版本列表的新子线程
         self.__thread = threading.Thread(target = self.downloadIP, args = (path, version, ));
         self.__thread.setDaemon(True)
@@ -51,9 +79,10 @@ class MainWindow(Frame):
 
     # 下载平台
     def downloadIP(self, path, version):
-        ret, urlList = requestJson({"key":"ptip", "req":"urlList", "version":version});
+        ret, resp = requestJson({"key":"ptip", "req":"urlList", "version":version});
         self.__tips.set("");
         if ret:
+            urlList = resp.get("urlList", []);
             self.__du = DownloadUnZip(self);
             self.__du.pack();
             def onComplete():
