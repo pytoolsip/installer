@@ -24,7 +24,7 @@ class DownloadUnZip(Frame):
         self.initView();
             
     def initView(self):
-        Label(self, text="- 下载与解压 -", font=("宋体", 12), fg="gray", bg= AppConfig["ContentColor"]).pack(pady = (30, 10));
+        Label(self, text="- 下载与解压 -", font=("宋体", 12), fg="gray", bg= AppConfig["ContentColor"]).pack(pady = (30, 20));
         # 初始化提示
         self.initTips();
         # 初始化进度条
@@ -32,11 +32,11 @@ class DownloadUnZip(Frame):
 
     def initTips(self):
         self.__tips = StringVar();
-        Label(self, textvariable=self.__tips, font=("宋体", 10), bg= AppConfig["ContentColor"]).pack(pady = (30, 10));
+        Label(self, textvariable=self.__tips, font=("宋体", 10), bg= AppConfig["ContentColor"]).pack(padx = 10, pady = (40, 20));
 
     def initProgressbar(self):
         self.__progress = IntVar();
-        ttk.Progressbar(self, length=int(self.winfo_width()*0.9), variable = self.__progress).pack();
+        ttk.Progressbar(self, length=int(self.winfo_width()), variable = self.__progress).pack(padx = 10, pady = (0, 100));
 
     def start(self, urlInfoList, basePath, onComplete = None):
         # 重置任务列表

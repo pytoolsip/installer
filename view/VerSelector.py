@@ -24,7 +24,7 @@ class VerSelector(Frame):
         # 初始化路径输入框
         self.initPathEntry();
         # 点击安装按钮
-        Button(self, text="点击安装", command=self.__onInstall__, width=20).pack(pady = 10);
+        Button(self, text="点击安装", command=self.__onInstall__, width=20).pack(pady = (20, 40));
 
     def initVerCombobox(self):
         f = Frame(self, borderwidth = 2, relief = GROOVE);

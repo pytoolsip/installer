@@ -3,7 +3,7 @@
 # @Date:   2019-08-08 17:50:27
 # @Last Modified by:   JinZhang
 # @Last Modified time: 2019-08-08 19:47:35
-import os, re;
+import os, re, sys;
 
 # 导入过滤
 importMap = [];
@@ -53,13 +53,21 @@ def merge(srcFile, tgtFile):
 		writeContentByFile(srcFile, f);
 
 # 打包文件
-def pack(tgtFile):
-	code = os.system(f"pyInstaller -F -w {tgtFile} --distpath=./dist");
+def pack(tgtFile, argv = []):
+	if len(argv) > 0:
+		argv.append("");
+	argvStr = " ".join(argv);
+	code = os.system(f"pyInstaller -F -w {argvStr}{tgtFile} --distpath=./dist");
 	if code != 0:
 		raise Exception(f"Pack failed! [code:{code}]");
 
 if __name__ == '__main__':
-	tgtPath = "installer.py"; # 目标文件路径
+	# 获取额外打包参数
+	argv = [];
+	if len(sys.argv) > 1:
+		argv.extend(sys.argv[1:]);
+	# 目标文件路径
+	tgtPath = "installer.py";
 	if os.path.exists("main.py"):
 		merge("main.py", tgtPath);
-		pack(tgtPath);
+		pack(tgtPath, argv);
