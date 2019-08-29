@@ -49,22 +49,31 @@ class MainWindow(Frame):
         Label(self, text=AppConfig["WinTitle"], font=("Arial", 20)).pack(pady = (40, 20));
         # 初始化版权信息
         Label(self, text=AppConfig["Copyright"], font=("宋体", 10)).pack(side = BOTTOM, pady = (20, 0));
+        # 初始化内容
+        self.initContent()
+
+    def initContent(self):
+        f = Frame(self, borderwidth = 2, relief = GROOVE, bg= AppConfig["ContentColor"]);
+        f.pack(expand = YES, fill = BOTH);
         # 初始化下拉框
-        self.__vc = VerSelector(self);
+        self.__vc = VerSelector(f);
         self.__vc.pack(expand = YES, fill = BOTH);
+        # self.__vc.forget();
         # 点击安装回调
         self.__vc.onInstall = self.onInstall;
         # 初始化下载进度条
-        self.__du = DownloadUnZip(self);
+        self.__du = DownloadUnZip(f);
         self.__du.forget();
         # 初始化提示信息
         self.__tipsVal = StringVar();
-        self.__tips = Label(self, textvariable=self.__tipsVal, font=("宋体", 10), bg= AppConfig["ContentColor"]);
+        self.__tips = Label(f, textvariable=self.__tipsVal, font=("宋体", 10), bg= AppConfig["ContentColor"]);
         self.__tips.pack(pady = (80, 10));
         # 初始化重新安装按钮
-        self.__reInstallBtn = Button(self, text="点击重新安装", command=self.reInstall);
-        self.__reInstallBtn.pack(pady = (40, 10));
+        self.__reInstallBtn = Button(f, text="点击重新安装", command=self.reInstall);
         self.__reInstallBtn.forget();
+        # 初始化打开安装路径按钮
+        self.__openIPPathBtn = Button(f, text="打开安装路径", command=self.onOpenIPPath);
+        self.__openIPPathBtn.forget();
         pass;
     
     def onInstall(self, path, version):
@@ -100,7 +109,7 @@ class MainWindow(Frame):
                 self.showFailedTips("平台数据异常，下载平台失败！");
         else:
             messagebox.showerror(title="网络异常", message="下载平台失败！");
-            self.showFailedTips("连接网络异常，下载平台失败！");
+            self.showFailedTips("网络连接异常，下载平台失败！");
         # 置空线程对象
         self.__thread = None;
 
@@ -108,7 +117,7 @@ class MainWindow(Frame):
         self.__du.forget();
         self.__tips.pack(pady = (80, 10));
         self.__tipsVal.set(f"平台【{version}】下载安装完成！\n安装路径为：{path}");
-        Button(self, text="打开安装路径", command=self.onOpenIPPath).pack(pady = (40, 10));
+        self.__openIPPathBtn.pack(pady = (40, 10));
         pass;
 
     def onOpenIPPath(self):
@@ -121,7 +130,7 @@ class MainWindow(Frame):
     def showFailedTips(self, tips):
         self.__du.forget();
         self.__tips.pack(pady = (80, 10));
-        self.__tipsVal.set("连接网络异常，下载平台失败！");
+        self.__tipsVal.set(tips);
         self.__reInstallBtn.pack(pady = (40, 10));
 
     def reInstall(self):

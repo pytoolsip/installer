@@ -36,7 +36,7 @@ class DownloadUnZip(Frame):
 
     def initProgressbar(self):
         self.__progress = IntVar();
-        ttk.Progressbar(self, length=int(self.winfo_width()), variable = self.__progress).pack(padx = 10, pady = (0, 100));
+        ttk.Progressbar(self, length=int(self.__parent.winfo_width()), variable = self.__progress).pack(padx = 10, pady = (0, 100));
 
     def start(self, urlInfoList, basePath, onComplete = None):
         # 重置任务列表
