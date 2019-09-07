@@ -77,7 +77,7 @@ class DownloadUnZip(Frame):
             elif task["type"] == "unzip":
                 self.__unzip__(task["filepath"], task["dirpath"]);
             # 执行下个任务
-            # self.runTaskList();
+            self.runTaskList();
         else:
             self.__progress.set(100);
             if callable(self.__onComplete):
@@ -89,16 +89,15 @@ class DownloadUnZip(Frame):
 
     # 校验文件路径
     def __checkFilePath__(self, filePath):
-        dirPath = filePath;
-        if os.path.isfile(filePath):
-            dirPath = os.path.basename(filePath);
+        dirPath = os.path.basename(filePath);
         if not os.path.exists(dirPath):
             os.mkdir(dirPath);
 
     # 下载文件
     def __download__(self, url, filepath):
         self.__tips.set(f"正在下载：\n{url}");
-        request.urlretrieve(url, self.__checkFilePath__(filepath), self._schedule_);
+        self.__checkFilePath__(filepath);
+        request.urlretrieve(url, filepath, self._schedule_);
 
     # 下载回调
     def _schedule_(self, block, size, totalSize):
