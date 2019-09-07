@@ -6,11 +6,21 @@ from urllib import request;
 import threading;
 import zipfile;
 import os;
+import time;
 
 from config.AppConfig import *; # local
 from utils.urlUtil import *; # local
 from utils.threadUtil import *; # local
 from event.Instance import *; # local
+
+# 检测路径
+def checkPath(path):
+    if not path:
+        return "";
+    path = path.replace("\\", "/");
+    if path[0] == "/":
+        return path[1:];
+    return path;
 
 class DownloadUnZip(Frame):
     def __init__(self, parent):
@@ -18,7 +28,6 @@ class DownloadUnZip(Frame):
         self.__parent = parent;
         self.__taskList = [];
         self.__taskCnt = 0;
-        self.__thread = None;
         self.pack(expand = YES, fill = BOTH);
         self.update();
         self.initView();
@@ -39,17 +48,22 @@ class DownloadUnZip(Frame):
         ttk.Progressbar(self, length=int(self.__parent.winfo_width()), variable = self.__progress).pack(padx = 10, pady = (0, 100));
 
     def start(self, urlInfoList, basePath, onComplete = None):
+        print(f"Start download and unzip urlInfoList({urlInfoList}).")
         # 重置任务列表
         self.__taskList = [];
         for urlInfo in urlInfoList:
-            url = urlInfo["url"];
+            name, url = urlInfo.get("name", ""), urlInfo["url"];
             fileName = os.path.basename(url);
-            filepath = os.path.join(basePath, urlInfo["path"], fileName);
-            self.__taskList.append({"type" : "download", "url" : url, "filepath" : filepath});
+            _, ext = os.path.splitext(fileName);
+            if name:
+                filepath = os.path.join(basePath, checkPath(urlInfo["path"]), name+ext);
+            else:
+                filepath = os.path.join(basePath, checkPath(urlInfo["path"]), fileName);
+            filepath = filepath.replace("\\", "/");
+            self.__taskList.append({"type" : "download", "url" : AppConfig["homeUrl"] + url, "filepath" : filepath});
             # 判断是否zip文件
-            name, ext = os.path.splitext(fileName);
             if ext == ".zip":
-                self.__taskList.append({"type" : "unzip", "filepath" : filepath, "dirpath" : os.path.join(basePath, urlInfo["path"], name)});
+                self.__taskList.append({"type" : "unzip", "filepath" : filepath, "dirpath" : os.path.join(basePath, checkPath(urlInfo["path"]), name)});
         self.__taskCnt = len(self.__taskList); # 重置任务总数
         self.__onComplete = onComplete; # 重置完成任务列表的回调
         self.runTaskList(); # 运行任务
@@ -62,6 +76,8 @@ class DownloadUnZip(Frame):
                 self.__download__(task["url"], task["filepath"]);
             elif task["type"] == "unzip":
                 self.__unzip__(task["filepath"], task["dirpath"]);
+            # 执行下个任务
+            # self.runTaskList();
         else:
             self.__progress.set(100);
             if callable(self.__onComplete):
@@ -71,45 +87,47 @@ class DownloadUnZip(Frame):
     def getLastProgress(self):
         return (self.__taskCnt - len(self.__taskList))/self.__taskCnt * 100;
 
+    # 校验文件路径
+    def __checkFilePath__(self, filePath):
+        dirPath = filePath;
+        if os.path.isfile(filePath):
+            dirPath = os.path.basename(filePath);
+        if not os.path.exists(dirPath):
+            os.mkdir(dirPath);
+
     # 下载文件
     def __download__(self, url, filepath):
-        self.__tips.set(f"正在下载：{url}");
-        request.urlretrieve(url, filepath, self._schedule_);
+        self.__tips.set(f"正在下载：\n{url}");
+        request.urlretrieve(url, self.__checkFilePath__(filepath), self._schedule_);
 
     # 下载回调
     def _schedule_(self, block, size, totalSize):
         rate = block*size / totalSize * 100;
         self.__progress.set(self.getLastProgress() + rate);
-        tips = re.sub("\[%d+\%\]", "", self.__tips.get());
+        tips = re.sub("\n\[\d+.?\d+\%\]", "", self.__tips.get());
         if block*size < totalSize:
             rate = round(rate, 2);
-            self.__tips.set(f"{tips} [{rate}%]");
+            self.__tips.set(f"{tips}\n[{rate}%]");
         else:
-            url = tips.replace("正在下载：", "").strip();
-            self.__tips.set(f"完成下载：{url}");
+            url = tips.replace("正在下载：\n", "").strip();
+            self.__tips.set(f"完成下载：\n{url}");
         pass;
 
     # 解压文件
     def __unzip__(self, filepath, dirpath):
         if not os.path.exists(filepath):
             return;
-        # 停止之前的进程
-        if self.__thread:
-            stopThread(self.__thread);
-        self.__thread = threading.Thread(target = self._unzipFile_, args = (filepath, dirpath));
-        self.__thread.setDaemon(True)
-        self.__thread.start();
+        self.__tips.set(f"开始解压：{filepath}");
+        self._unzipFile_(filepath, dirpath);
 
     # 解压回调
     def _unzipFile_(self, filepath, dirpath):
-        zf = zipfile.ZipFile(filepath, "r");
-        totalCnt = len(zf.namelist());
-        completeCnt = 0;
-        for file in zf.namelist():
-            self.__tips.set(f"正在解压：{file}");
-            zf.extract(file, dirpath);
-            completeCnt += 1;
-            self.__progress.set(self.getLastProgress() + completeCnt/totalCnt * 100);
-        zf.close();
-        self.__tips.set(f"完成解压：{filepath}");
-        self.__thread = None;
+        with zipfile.ZipFile(filepath, "r") as zf:
+            totalCnt = len(zf.namelist());
+            completeCnt = 0;
+            for file in zf.namelist():
+                self.__tips.set(f"正在解压：{file}");
+                zf.extract(file, dirpath);
+                completeCnt += 1;
+                self.__progress.set(self.getLastProgress() + completeCnt/totalCnt * 100);
+            self.__tips.set(f"完成解压：{filepath}");

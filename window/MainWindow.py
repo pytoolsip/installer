@@ -77,33 +77,35 @@ class MainWindow(Frame):
         pass;
     
     def onInstall(self, path, version):
-        self.__basePath = path; # 重置基本路径
+        self.__basePath = os.path.join(path, "PyToolsIP"); # 重置基本路径
+        if not os.path.exists(self.__basePath):
+            os.mkdir(self.__basePath);
         self.__vc.forget();
-        self.downloadIPByThread(path, version);
+        self.downloadIPByThread(version);
 
     # 启动新线程下载平台
-    def downloadIPByThread(self, path, version):
-        print("downloadIP:", path, version);
+    def downloadIPByThread(self, version):
+        print("downloadIP:", self.__basePath, version);
         self.__tipsVal.set(f"准备开始下载平台【{version}】...");
         # 创建下载及解压视图
         self.__du.pack(expand = YES, fill = BOTH);
         # 停止之前的子线程
         self.stopThread();
         # 开始请求版本列表的新子线程
-        self.__thread = threading.Thread(target = self.downloadIP, args = (path, version, ));
+        self.__thread = threading.Thread(target = self.downloadIP, args = (version, ));
         self.__thread.setDaemon(True)
         self.__thread.start();
 
     # 下载平台
-    def downloadIP(self, path, version):
+    def downloadIP(self, version):
         self.__tips.forget();
         ret, resp = requestJson({"key":"ptip", "req":"urlList", "version":version});
         if ret:
             urlList = resp.get("urlList", []);
             if len(urlList) > 0:
                 def onComplete():
-                    self.onComplete(path, version);
-                self.__du.start(urlList, path, onComplete = onComplete);
+                    self.onComplete(version);
+                self.__du.start(urlList, self.__basePath, onComplete = onComplete);
             else:
                 messagebox.showerror(title="数据异常", message="下载平台失败！");
                 self.showFailedTips("平台数据异常，下载平台失败！");
@@ -113,10 +115,10 @@ class MainWindow(Frame):
         # 置空线程对象
         self.__thread = None;
 
-    def onComplete(self, path, version):
+    def onComplete(self, version):
         self.__du.forget();
         self.__tips.pack(pady = (80, 10));
-        self.__tipsVal.set(f"平台【{version}】下载安装完成！\n安装路径为：{path}");
+        self.__tipsVal.set(f"平台【{version}】下载安装完成！\n安装路径为：{self.__basePath}");
         self.__openIPPathBtn.pack(pady = (40, 10));
         pass;
 
