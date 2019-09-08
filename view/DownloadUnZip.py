@@ -48,7 +48,7 @@ class DownloadUnZip(Frame):
         ttk.Progressbar(self, length=int(self.__parent.winfo_width()), variable = self.__progress).pack(padx = 10, pady = (0, 100));
 
     def start(self, urlInfoList, basePath, onComplete = None):
-        print(f"Start download and unzip urlInfoList({urlInfoList}).")
+        # print(f"Start download and unzip urlInfoList({urlInfoList}).");
         # 重置任务列表
         self.__taskList = [];
         for urlInfo in urlInfoList:
@@ -63,7 +63,7 @@ class DownloadUnZip(Frame):
             self.__taskList.append({"type" : "download", "url" : AppConfig["homeUrl"] + url, "filepath" : filepath});
             # 判断是否zip文件
             if ext == ".zip":
-                self.__taskList.append({"type" : "unzip", "filepath" : filepath, "dirpath" : os.path.join(basePath, checkPath(urlInfo["path"]), name)});
+                self.__taskList.append({"type" : "unzip", "filepath" : filepath, "dirpath" : os.path.join(basePath, checkPath(urlInfo["path"]))});
         self.__taskCnt = len(self.__taskList); # 重置任务总数
         self.__onComplete = onComplete; # 重置完成任务列表的回调
         self.runTaskList(); # 运行任务
@@ -89,7 +89,7 @@ class DownloadUnZip(Frame):
 
     # 校验文件路径
     def __checkFilePath__(self, filePath):
-        dirPath = os.path.basename(filePath);
+        dirPath = os.path.dirname(filePath);
         if not os.path.exists(dirPath):
             os.mkdir(dirPath);
 
@@ -113,14 +113,14 @@ class DownloadUnZip(Frame):
         pass;
 
     # 解压文件
-    def __unzip__(self, filepath, dirpath):
+    def __unzip__(self, filepath, dirpath, isRmZip = True):
         if not os.path.exists(filepath):
             return;
         self.__tips.set(f"开始解压：{filepath}");
-        self._unzipFile_(filepath, dirpath);
+        self._unzipFile_(filepath, dirpath, isRmZip);
 
     # 解压回调
-    def _unzipFile_(self, filepath, dirpath):
+    def _unzipFile_(self, filepath, dirpath, isRmZip = True):
         with zipfile.ZipFile(filepath, "r") as zf:
             totalCnt = len(zf.namelist());
             completeCnt = 0;
@@ -129,4 +129,9 @@ class DownloadUnZip(Frame):
                 zf.extract(file, dirpath);
                 completeCnt += 1;
                 self.__progress.set(self.getLastProgress() + completeCnt/totalCnt * 100);
+            zf.close();
+            # 移除zip文件
+            if isRmZip:
+                self.__tips.set(f"正在移除文件：{filepath}");
+                os.remove(filepath);
             self.__tips.set(f"完成解压：{filepath}");

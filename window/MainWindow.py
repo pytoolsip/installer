@@ -85,7 +85,7 @@ class MainWindow(Frame):
 
     # 启动新线程下载平台
     def downloadIPByThread(self, version):
-        print("downloadIP:", self.__basePath, version);
+        # print("downloadIP:", self.__basePath, version);
         self.__tipsVal.set(f"准备开始下载平台【{version}】...");
         # 创建下载及解压视图
         self.__du.pack(expand = YES, fill = BOTH);
@@ -124,7 +124,7 @@ class MainWindow(Frame):
 
     def onOpenIPPath(self):
         if self.__basePath and os.path.exists(self.__basePath):
-            os.system("explorer "+self.__basePath);
+            os.system("explorer " + os.path.abspath(self.__basePath));
             EventSystem.dispatch(EventID.DO_QUIT_APP, {}); # 确定退出窗口
         else:
             messagebox.showerror(title="路径异常", message="打开安装路径失败！");
