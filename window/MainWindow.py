@@ -79,7 +79,7 @@ class MainWindow(Frame):
     def onInstall(self, path, version):
         self.__basePath = os.path.join(path, "PyToolsIP"); # 重置基本路径
         if not os.path.exists(self.__basePath):
-            os.mkdir(self.__basePath);
+            os.makedirs(self.__basePath);
         self.__vc.forget();
         self.downloadIPByThread(version);
 
@@ -103,6 +103,7 @@ class MainWindow(Frame):
         if ret:
             urlList = resp.get("urlList", []);
             if len(urlList) > 0:
+                self.saveUrlList(urlList);
                 def onComplete():
                     self.onComplete(version);
                 self.__du.start(urlList, self.__basePath, onComplete = onComplete);
@@ -114,6 +115,14 @@ class MainWindow(Frame):
             self.showFailedTips("网络连接异常，下载平台失败！");
         # 置空线程对象
         self.__thread = None;
+
+    # 保存url列表数据
+    def saveUrlList(self, urlList):
+        dataPath = os.path.join(self.__basePath, "data"); # 数据路径
+        if not os.path.exists(dataPath):
+            os.makedirs(dataPath);
+        with open(os.path.join(dataPath, "url_list.json"), "w") as f:
+            f.write(json.dumps(urlList));
 
     def onComplete(self, version):
         self.__du.forget();
