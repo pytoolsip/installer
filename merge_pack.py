@@ -57,7 +57,7 @@ def pack(tgtFile, argv = []):
 	if len(argv) > 0:
 		argv.append("");
 	argvStr = " ".join(argv);
-	code = os.system(f"pyInstaller -F -w {argvStr}{tgtFile} --distpath=./dist");
+	code = os.system(f"pyInstaller -F -w {argvStr}-i .\icon\dzjh.ico {tgtFile} --distpath=./dist");
 	if code != 0:
 		raise Exception(f"Pack failed! [code:{code}]");
 

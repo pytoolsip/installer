@@ -6,6 +6,8 @@ import shutil;
 
 from config.AppConfig import *; # local
 from event.Instance import *; # local
+from utils.urlUtil import *; # local
+from utils.threadUtil import *; # local
 
 from view.VerSelector import *; # local
 from view.DownloadUnZip import *; # local
@@ -127,7 +129,7 @@ class MainWindow(Frame):
     def onComplete(self, version):
         self.__du.forget();
         self.__tips.pack(pady = (80, 10));
-        self.__tipsVal.set(f"平台【{version}】下载安装完成！\n安装路径为：{self.__basePath}");
+        self.__tipsVal.set(f"平台【{version}】下载安装完成！\n安装路径为："+self.__basePath);
         self.__openIPPathBtn.pack(pady = (40, 10));
         pass;
 
