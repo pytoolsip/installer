@@ -1,13 +1,21 @@
 AppConfig = {
 	"Title" : u"PyToolsIP Installer",
 	"Size" : (640, 420),
-	"Copyright" : u"Copyright(C) 2018-2019 JimDreamHeart. All Rights Reserved",
+	"Copyright" : u"Copyright(C) 2018-2019 JDreamHeart. All Rights Reserved",
 	"WinTitle" : u"PyToolsIP【Python工具集成平台】",
 	"ContentColor" : "#CDCDCD",
 	"homeUrl" : "http://jimdreamheart.club",
 	# "homeUrl" : "http://localhost:8000",
 	"reqInfoUrl" : "http://jimdreamheart.club/pytoolsip/reqinfo",
 	# "reqInfoUrl" : "http://localhost:8000/reqinfo",
+	
+	"piiList" : [
+		{"key" : "阿里云", "val" : "https://mirrors.aliyun.com/pypi/simple"},
+		{"key" : "默认", "val" : ""},
+		{"key" : "豆瓣", "val" : "https://pypi.doubanio.com/simple"},
+		{"key" : "清华大学", "val" : "https://pypi.tuna.tsinghua.edu.cn/simple"},
+		{"key" : "清华大学2", "val" : "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"},
+	],
 };
 
 PngConfig = {
