@@ -10,8 +10,8 @@ AppConfig = {
 	# "reqInfoUrl" : "http://localhost:8000/reqinfo",
 	
 	"piiList" : [
-		{"key" : "阿里云", "val" : "https://mirrors.aliyun.com/pypi/simple"},
 		{"key" : "默认", "val" : ""},
+		{"key" : "阿里云", "val" : "https://mirrors.aliyun.com/pypi/simple", "isDefault" : True},
 		{"key" : "豆瓣", "val" : "https://pypi.doubanio.com/simple"},
 		{"key" : "清华大学", "val" : "https://pypi.tuna.tsinghua.edu.cn/simple"},
 		{"key" : "清华大学2", "val" : "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"},

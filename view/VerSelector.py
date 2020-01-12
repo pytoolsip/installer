@@ -53,16 +53,18 @@ class VerSelector(Frame):
         self.__pii = ttk.Combobox(f, state="readonly", width=32);
         self.__pii.grid(row = 0, column = 1, rowspan = 2);
         # 更新配置
-        piiKeyList = self.getPiiKeyList();
+        piiKeyList, default = self.getPiiKeyList();
         self.__pii.configure(value = piiKeyList);
         if len(piiKeyList) > 0:
-            self.__pii.current(0);
+            self.__pii.current(default);
 
     def getPiiKeyList(self):
-        ret = [];
+        ret, default = [], 0;
         for pii in AppConfig.get("piiList", []):
             ret.append(pii["key"]);
-        return ret;
+            if default == 0 and pii.get("isDefault", False):
+                default = len(ret) - 1;
+        return ret, default;
 
     def getPiiValByKey(self, key):
         for pii in AppConfig.get("piiList", []):
