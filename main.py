@@ -1,3 +1,6 @@
+import ssl;
+ssl._create_default_https_context = ssl._create_unverified_context; # 设置验证SSL证书
+
 from tkinter import *
 
 from window.MainApp import *; # local

@@ -154,7 +154,7 @@ class MainWindow(Frame):
         self.__reInstallBtn.forget();
         self.__vc.pack(expand = YES, fill = BOTH);
         
-    def savePii():
+    def savePii(self):
         cfgPath = os.path.join(self.__basePath, "data", "config"); # 配置路径
         if not os.path.exists(cfgPath):
             os.makedirs(cfgPath);

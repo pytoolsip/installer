@@ -1,12 +1,12 @@
 AppConfig = {
 	"Title" : u"PyToolsIP Installer",
 	"Size" : (640, 420),
-	"Copyright" : u"Copyright(C) 2018-2019 JDreamHeart. All Rights Reserved",
+	"Copyright" : u"Copyright(C) 2018-2020 JDreamHeart. All Rights Reserved",
 	"WinTitle" : u"PyToolsIP【Python工具集成平台】",
 	"ContentColor" : "#CDCDCD",
-	"homeUrl" : "http://jimdreamheart.club",
+	"homeUrl" : "https://ptip.jdreamheart.com",
 	# "homeUrl" : "http://localhost:8000",
-	"reqInfoUrl" : "http://jimdreamheart.club/pytoolsip/reqinfo",
+	"reqInfoUrl" : "https://ptip.jdreamheart.com/reqinfo",
 	# "reqInfoUrl" : "http://localhost:8000/reqinfo",
 	
 	"piiList" : [
