@@ -127,7 +127,7 @@ class MainWindow(Frame):
         if not os.path.exists(dataPath):
             os.makedirs(dataPath);
         with open(os.path.join(dataPath, "url_list.json"), "w") as f:
-            f.write(json.dumps(urlList));
+            f.write(json.dumps({"urlList" : urlList}));
 
     def onComplete(self, version):
         self.__du.forget();
