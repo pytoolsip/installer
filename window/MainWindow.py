@@ -6,6 +6,7 @@ import shutil;
 
 from config.AppConfig import *; # local
 from event.Instance import *; # local
+from utils.textUtil import *; # local
 from utils.urlUtil import *; # local
 from utils.threadUtil import *; # local
 
@@ -73,9 +74,21 @@ class MainWindow(Frame):
         # 初始化重新安装按钮
         self.__reInstallBtn = Button(f, text="点击重新安装", command=self.reInstall);
         self.__reInstallBtn.forget();
-        # 初始化打开安装路径按钮
-        self.__openIPPathBtn = Button(f, text="打开安装路径", command=self.onOpenIPPath);
-        self.__openIPPathBtn.forget();
+        # 初始化完成安装按钮
+        self.__finishBtn = Button(f, text="完成安装", command=self.onFinish);
+        self.__finishBtn.forget();
+        # 完成安装后的选项
+        self.__createLnkVal = BooleanVar();
+        self.__createLnk = Checkbutton(f, text="生成桌面快捷方式", variable = self.__createLnkVal, onvalue = True, offvalue = False);
+        self.__createLnkVal.set(True);
+        self.__createLnk.forget();
+        self.__openPathVal = BooleanVar();
+        self.__openPath = Checkbutton(f, text="打开安装目录", variable = self.__openPathVal, onvalue = True, offvalue = False);
+        self.__openPath.forget();
+        self.__runPtipVal = BooleanVar();
+        self.__runPtip = Checkbutton(f, text="运行PyToolsIP", variable = self.__runPtipVal, onvalue = True, offvalue = False);
+        self.__runPtipVal.set(True);
+        self.__runPtip.forget();
         pass;
     
     def onInstall(self, path, version):
@@ -128,15 +141,35 @@ class MainWindow(Frame):
 
     def onComplete(self, version):
         self.__du.forget();
-        self.__tips.pack(pady = (80, 10));
-        self.__tipsVal.set(f"平台【{version}】下载安装完成！\n安装路径为："+self.__basePath);
-        self.__openIPPathBtn.pack(pady = (40, 10));
+        self.__tips.pack(pady = (60, 10));
+        self.__tipsVal.set(f"已完成平台【{version}】安装！\n"+self.clipText("安装路径为："+ os.path.abspath(self.__basePath)));
+        # 操作选项
+        self.__createLnk.pack(pady = (20, 10));
+        self.__openPath.pack(pady = (20, 10));
+        self.__runPtip.pack(pady = (20, 10));
+        # 完成按钮
+        self.__finishBtn.pack(pady = (20, 10));
         pass;
 
-    def onOpenIPPath(self):
+    def onFinish(self):
         if self.__basePath and os.path.exists(self.__basePath):
-            os.system("explorer " + os.path.abspath(self.__basePath));
-            EventSystem.dispatch(EventID.DO_QUIT_APP, {}); # 确定退出窗口
+            basePath = os.path.abspath(self.__basePath);
+            exeName = "pytoolsip.exe";
+            exePath = os.path.join(basePath, exeName);
+            # 创建桌面快捷方式
+            if self.__createLnkVal.get():
+                mklnkPath = os.path.join(basePath, "run", "makelnk.bat");
+                if os.path.exists(mklnkPath) and os.path.exists(exePath):
+                    runCmd(" ".join([mklnkPath, exePath, "PyToolsIP", "Python工具集成平台"]));
+            # 打开安装目录
+            if self.__openPathVal.get():
+                runCmd("cmd /c explorer " + basePath);
+            # 运行PyToolsIP
+            if self.__runPtipVal.get():
+                if os.path.exists(exePath):
+                    os.system(f"start /d {basePath} {exeName}");
+            # 确定退出窗口
+            EventSystem.dispatch(EventID.DO_QUIT_APP, {});
         else:
             messagebox.showerror(title="路径异常", message="打开安装路径失败！");
 
@@ -150,4 +183,7 @@ class MainWindow(Frame):
         self.__tips.forget();
         self.__reInstallBtn.forget();
         self.__vc.pack(expand = YES, fill = BOTH);
-        
+
+    # 裁剪文本
+    def clipText(self, text):
+        return clipText(text, 60);        
