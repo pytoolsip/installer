@@ -139,4 +139,4 @@ class DownloadUnZip(Frame):
 
     # 裁剪文本
     def clipText(self, text):
-        return clipText(text, 60);
+        return clipText(text, 80);
