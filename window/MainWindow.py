@@ -34,7 +34,10 @@ class MainWindow(Frame):
                 self.stopThread(); # 停止子线程
                 # 移除安装路径内容
                 if self.__basePath and os.path.exists(self.__basePath):
-                    shutil.rmtree(self.__basePath);
+                    try:
+                        shutil.rmtree(self.__basePath);
+                    except Exception as e:
+                        pass;
                     self.__basePath = "";
 
     def registerEvent(self):
@@ -76,18 +79,18 @@ class MainWindow(Frame):
         self.__reInstallBtn = Button(f, text="点击重新安装", command=self.reInstall);
         self.__reInstallBtn.forget();
         # 初始化完成安装按钮
-        self.__finishBtn = Button(f, text="完成安装", command=self.onFinish);
+        self.__finishBtn = Button(f, text="完成安装", width = 20, command=self.onFinish);
         self.__finishBtn.forget();
         # 完成安装后的选项
         self.__createLnkVal = BooleanVar();
-        self.__createLnk = Checkbutton(f, text="生成桌面快捷方式", variable = self.__createLnkVal, onvalue = True, offvalue = False);
+        self.__createLnk = Checkbutton(f, text="生成桌面快捷方式", variable = self.__createLnkVal, onvalue = True, offvalue = False, bg= AppConfig["ContentColor"]);
         self.__createLnkVal.set(True);
         self.__createLnk.forget();
         self.__openPathVal = BooleanVar();
-        self.__openPath = Checkbutton(f, text="打开安装目录", variable = self.__openPathVal, onvalue = True, offvalue = False);
+        self.__openPath = Checkbutton(f, text="打开平台安装目录", variable = self.__openPathVal, onvalue = True, offvalue = False, bg= AppConfig["ContentColor"]);
         self.__openPath.forget();
         self.__runPtipVal = BooleanVar();
-        self.__runPtip = Checkbutton(f, text="运行PyToolsIP", variable = self.__runPtipVal, onvalue = True, offvalue = False);
+        self.__runPtip = Checkbutton(f, text="启动平台运行程序", variable = self.__runPtipVal, onvalue = True, offvalue = False, bg= AppConfig["ContentColor"]);
         self.__runPtipVal.set(True);
         self.__runPtip.forget();
         pass;
@@ -144,12 +147,12 @@ class MainWindow(Frame):
 
     def onComplete(self, version):
         self.__du.forget();
-        self.__tips.pack(pady = (60, 10));
+        self.__tips.pack(pady = (40, 10));
         self.__tipsVal.set(f"已完成平台【{version}】安装！\n"+self.clipText("安装路径为："+ os.path.abspath(self.__basePath)));
         # 操作选项
-        self.__createLnk.pack(pady = (20, 10));
-        self.__openPath.pack(pady = (20, 10));
-        self.__runPtip.pack(pady = (20, 10));
+        self.__createLnk.pack(pady = (10, 0));
+        self.__openPath.pack(pady = (10, 0));
+        self.__runPtip.pack(pady = (10, 0));
         # 完成按钮
         self.__finishBtn.pack(pady = (20, 10));
         pass;

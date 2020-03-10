@@ -86,7 +86,7 @@ class DownloadUnZip(Frame):
 
     # 获取上次的进度
     def getLastProgress(self):
-        return (self.__taskCnt - len(self.__taskList))/self.__taskCnt * 100;
+        return (self.__taskCnt - len(self.__taskList) - 1)/self.__taskCnt * 100;
 
     # 校验文件路径
     def __checkFilePath__(self, filePath):
@@ -103,11 +103,10 @@ class DownloadUnZip(Frame):
     # 下载回调
     def _schedule_(self, block, size, totalSize):
         rate = block*size / totalSize * 100;
-        self.__progress.set(self.getLastProgress() + rate);
+        self.__progress.set(self.getLastProgress() + rate/self.__taskCnt);
         tips = re.sub("\[\d+.?\d+\%\]", "", self.__tips.get());
         if block*size < totalSize:
-            rate = round(rate, 2);
-            self.__tips.set(self.clipText(f"{tips}[{rate}%]"));
+            self.__tips.set(self.clipText(f"{tips}[%.2f%%]" % rate));
         else:
             url = tips.replace("正在下载：", "").strip();
             self.__tips.set(self.clipText(f"完成下载：{url}"));
@@ -129,7 +128,7 @@ class DownloadUnZip(Frame):
                 self.__tips.set(self.clipText(f"正在解压：{file}"));
                 zf.extract(file, dirpath);
                 completeCnt += 1;
-                self.__progress.set(self.getLastProgress() + completeCnt/totalCnt * 100);
+                self.__progress.set(self.getLastProgress() + completeCnt/totalCnt * 100/self.__taskCnt);
             zf.close();
             # 移除zip文件
             if isRmZip:

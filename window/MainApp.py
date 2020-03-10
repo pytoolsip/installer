@@ -38,7 +38,7 @@ class MainApp(Tk):
     def initIcon(self):
         if "AppIcon" in PngConfig:
             img = base64.b64decode(PngConfig["AppIcon"].encode());
-            fileName = f"temp_dzjh_{time.time()}.ico";
+            fileName = f"temp_pytoolsip_{time.time()}.ico";
             with open(fileName, 'wb') as f:
                 f.write(img);
             self.iconbitmap(fileName);
