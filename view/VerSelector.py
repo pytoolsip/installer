@@ -18,13 +18,15 @@ class VerSelector(Frame):
         self.initView();
         
     def initView(self):
-        Label(self, text="- 选择安装 -", font=("宋体", 12), fg="gray", bg= AppConfig["ContentColor"]).pack(pady = (30, 10));
+        Label(self, text="- 选择安装配置 -", font=("宋体", 12), fg="gray", bg= AppConfig["ContentColor"]).pack(pady = (20, 10));
         # 初始化下拉框
         self.initVerCombobox();
         # 初始化路径输入框
         self.initPathEntry();
+        # 初始化Pip安装镜像
+        self.initPipInstallImg();
         # 点击安装按钮
-        Button(self, text="点击安装", command=self.__onInstall__, width=20).pack(pady = (20, 60));
+        Button(self, text="确认安装", command=self.__onInstall__, width=20).pack(pady = (20, 20));
 
     def initVerCombobox(self):
         f = Frame(self, borderwidth = 2, relief = GROOVE);
@@ -44,6 +46,32 @@ class VerSelector(Frame):
         Entry(f, textvariable = self.__etVal, width=30).grid(row = 0, column = 1);
         Button(f, text="选择路径", command=self.onSelectPath).grid(row = 0, column = 2);
 
+    def initPipInstallImg(self):
+        f = Frame(self, borderwidth = 2, relief = GROOVE);
+        f.pack(pady = 10);
+        Label(f, text="PIP安装镜像:", font=("宋体", 10)).grid(row = 0, column = 0);
+        self.__pii = ttk.Combobox(f, state="readonly", width=32);
+        self.__pii.grid(row = 0, column = 1, rowspan = 2);
+        # 更新配置
+        piiKeyList, default = self.getPiiKeyList();
+        self.__pii.configure(value = piiKeyList);
+        if len(piiKeyList) > 0:
+            self.__pii.current(default);
+
+    def getPiiKeyList(self):
+        ret, default = [], 0;
+        for pii in AppConfig.get("piiList", []):
+            ret.append(pii["key"]);
+            if default == 0 and pii.get("isDefault", False):
+                default = len(ret) - 1;
+        return ret, default;
+
+    def getPiiValByKey(self, key):
+        for pii in AppConfig.get("piiList", []):
+            if pii["key"] == key:
+                return pii["val"];
+        return "";
+
     def onSelectPath(self):
         path = askdirectory();
         if path:
@@ -57,7 +85,7 @@ class VerSelector(Frame):
             messagebox.showinfo(title="安装提示", message="所选择的安装路径不存在！");
             return;
         if hasattr(self, "onInstall"):
-            self.onInstall(self.__etVal.get(), self.__cbb.get());
+            self.onInstall(self.__etVal.get(), self.__cbb.get(), self.getPiiValByKey(self.__pii.get()));
         pass;
 
     # 启动新线程请求版本列表

@@ -19,6 +19,7 @@ class MainWindow(Frame):
         self.__parent = parent;
         self.__thread = None;
         self.__basePath = "";
+        self.__pii = ""; # pip安装镜像
         self.pack(expand = YES, fill = BOTH);
         self.initWindow();
         self.registerEvent();
@@ -91,7 +92,8 @@ class MainWindow(Frame):
         self.__runPtip.forget();
         pass;
     
-    def onInstall(self, path, version):
+    def onInstall(self, path, version, piiVal):
+        self.__pii = piiVal; # 重置pip安装镜像
         self.__basePath = os.path.join(path, "PyToolsIP"); # 重置基本路径
         if not os.path.exists(self.__basePath):
             os.makedirs(self.__basePath);
@@ -120,6 +122,7 @@ class MainWindow(Frame):
             if len(urlList) > 0:
                 self.saveUrlList(urlList);
                 def onComplete():
+                    self.savePii();
                     self.onComplete(version);
                 self.__du.start(urlList, self.__basePath, onComplete = onComplete);
             else:
@@ -137,7 +140,7 @@ class MainWindow(Frame):
         if not os.path.exists(dataPath):
             os.makedirs(dataPath);
         with open(os.path.join(dataPath, "url_list.json"), "w") as f:
-            f.write(json.dumps(urlList));
+            f.write(json.dumps({"urlList" : urlList}));
 
     def onComplete(self, version):
         self.__du.forget();
@@ -183,7 +186,16 @@ class MainWindow(Frame):
         self.__tips.forget();
         self.__reInstallBtn.forget();
         self.__vc.pack(expand = YES, fill = BOTH);
-
+        
+    def savePii(self):
+        cfgPath = os.path.join(self.__basePath, "data", "config"); # 配置路径
+        if not os.path.exists(cfgPath):
+            os.makedirs(cfgPath);
+        with open(os.path.join(cfgPath, "setting_cfg.json"), "w") as f:
+            f.write(json.dumps({
+                "pip_install_image" : self.__pii,
+            }));
+            
     # 裁剪文本
     def clipText(self, text):
-        return clipText(text, 60);        
+        return clipText(text, 60);
