@@ -1,5 +1,6 @@
 from tkinter import *;
 from tkinter import ttk;
+from tkinter import font;
 from tkinter.filedialog import askdirectory;
 import threading;
 from urllib import request;
@@ -7,6 +8,7 @@ import threading;
 import zipfile;
 import os;
 import time;
+import random;
 
 from config.AppConfig import *; # local
 from utils.urlUtil import *; # local
@@ -33,19 +35,40 @@ class DownloadUnZip(Frame):
         self.initView();
             
     def initView(self):
-        Label(self, text="- 下载与解压 -", font=("宋体", 12), fg="gray", bg= AppConfig["ContentColor"]).pack(pady = (30, 20));
+        Label(self, text="- 正在下载与解压平台 -", font=("宋体", 12, font.BOLD), fg= "#464646", bg= AppConfig["ContentColor"]).pack(pady = (30, 30));
         # 初始化提示
         self.initTips();
         # 初始化进度条
         self.initProgressbar();
+        # 初始化第二提示
+        self.initSecondTips();
 
     def initTips(self):
         self.__tips = StringVar();
-        Label(self, textvariable=self.__tips, font=("宋体", 10), bg= AppConfig["ContentColor"]).pack(padx = 10, pady = (40, 20));
+        Label(self, textvariable=self.__tips, font=("宋体", 10), bg= AppConfig["ContentColor"]).pack(padx = 10, pady = (20, 10));
 
     def initProgressbar(self):
         self.__progress = IntVar();
-        ttk.Progressbar(self, length=int(self.__parent.winfo_width()), variable = self.__progress).pack(padx = 10, pady = (0, 100));
+        ttk.Progressbar(self, length=int(self.__parent.winfo_width()), variable = self.__progress).pack(padx = 10, pady = (0, 40));
+
+    def initSecondTips(self):
+        self.__secondIndex = -1;
+        self.__secondTips = StringVar();
+        Label(self, textvariable=self.__secondTips, font=("宋体", 10), fg= "#565656", bg= AppConfig["ContentColor"]).pack(padx = 10, pady = (40, 30));
+        self.updateSecondTips();
+
+    def updateSecondTips(self):
+        tipsList = [
+            "* 安装及初次运行平台时，请确保能正常连接网络",
+            "* 安装完成后，初次运行平台时，会进行平台依赖模块的安装",
+            "* 更多详情，请关注平台官网：www.jdreamheart.com",
+        ];
+        if self.__secondIndex < 0:
+            self.__secondIndex =  random.randint(0, len(tipsList) - 1);
+        else:
+            self.__secondIndex = (self.__secondIndex + 1) % len(tipsList);
+        self.__secondTips.set(tipsList[self.__secondIndex]);
+        self.after(5000, self.updateSecondTips);
 
     def start(self, urlInfoList, basePath, onComplete = None):
         # print(f"Start download and unzip urlInfoList({urlInfoList}).");
