@@ -62,7 +62,7 @@ class DownloadUnZip(Frame):
         tipsList = [
             "* 安装及初次运行平台时，请确保能正常连接网络",
             "* 安装完成后，初次运行平台时，会进行平台依赖模块的安装",
-            "* 更多详情，请关注平台官网：www.jdreamheart.com",
+            "* 更多详情，请关注平台官网：ptip.jdreamheart.com",
         ];
         if self.__secondIndex < 0:
             self.__secondIndex =  random.randint(0, len(tipsList) - 1);
