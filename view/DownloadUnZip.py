@@ -11,6 +11,7 @@ import time;
 import random;
 
 from config.AppConfig import *; # local
+from utils.textUtil import *; # local
 from utils.urlUtil import *; # local
 from utils.threadUtil import *; # local
 from event.Instance import *; # local
@@ -108,7 +109,7 @@ class DownloadUnZip(Frame):
 
     # 获取上次的进度
     def getLastProgress(self):
-        return (self.__taskCnt - len(self.__taskList))/self.__taskCnt * 100;
+        return (self.__taskCnt - len(self.__taskList) - 1)/self.__taskCnt * 100;
 
     # 校验文件路径
     def __checkFilePath__(self, filePath):
@@ -118,28 +119,27 @@ class DownloadUnZip(Frame):
 
     # 下载文件
     def __download__(self, url, filepath):
-        self.__tips.set(f"正在下载：\n{url}");
+        self.__tips.set(self.clipText(f"正在下载：{url}"));
         self.__checkFilePath__(filepath);
         request.urlretrieve(url, filepath, self._schedule_);
 
     # 下载回调
     def _schedule_(self, block, size, totalSize):
         rate = block*size / totalSize * 100;
-        self.__progress.set(self.getLastProgress() + rate);
-        tips = re.sub("\n\[\d+.?\d+\%\]", "", self.__tips.get());
+        self.__progress.set(self.getLastProgress() + rate/self.__taskCnt);
+        tips = re.sub("\[\d+.?\d+\%\]", "", self.__tips.get());
         if block*size < totalSize:
-            rate = round(rate, 2);
-            self.__tips.set(f"{tips}\n[{rate}%]");
+            self.__tips.set(self.clipText(f"{tips}[%.2f%%]" % rate));
         else:
-            url = tips.replace("正在下载：\n", "").strip();
-            self.__tips.set(f"完成下载：\n{url}");
+            url = tips.replace("正在下载：", "").strip();
+            self.__tips.set(self.clipText(f"完成下载：{url}"));
         pass;
 
     # 解压文件
     def __unzip__(self, filepath, dirpath, isRmZip = True):
         if not os.path.exists(filepath):
             return;
-        self.__tips.set(f"开始解压：{filepath}");
+        self.__tips.set(self.clipText(f"开始解压：{filepath}"));
         self._unzipFile_(filepath, dirpath, isRmZip);
 
     # 解压回调
@@ -148,13 +148,17 @@ class DownloadUnZip(Frame):
             totalCnt = len(zf.namelist());
             completeCnt = 0;
             for file in zf.namelist():
-                self.__tips.set(f"正在解压：{file}");
+                self.__tips.set(self.clipText(f"正在解压：{file}"));
                 zf.extract(file, dirpath);
                 completeCnt += 1;
-                self.__progress.set(self.getLastProgress() + completeCnt/totalCnt * 100);
+                self.__progress.set(self.getLastProgress() + completeCnt/totalCnt * 100/self.__taskCnt);
             zf.close();
             # 移除zip文件
             if isRmZip:
-                self.__tips.set(f"正在移除文件：{filepath}");
+                self.__tips.set(self.clipText(f"正在移除文件：{filepath}"));
                 os.remove(filepath);
-            self.__tips.set(f"完成解压：{filepath}");
+            self.__tips.set(self.clipText(f"完成解压：{filepath}"));
+
+    # 裁剪文本
+    def clipText(self, text):
+        return clipText(text, 80);
